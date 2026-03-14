@@ -1,30 +1,83 @@
 [![banner image](https://images.aicrowd.com/raw_images/challenges/social_media_image_file/1155/3d44411079169ec5776a.jpg)](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)
-[![Discord](https://img.shields.io/discord/565639094860775436.svg)](https://discord.gg/yWurtB2huX)
 
 # [Meta CRAG-MM: Comprehensive RAG Benchmark for Multi-Modal, Multi-Turn Dialogue Challenge](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)
 
-This repository is the **Submission template and Starter kit** for the Meta CRAG-MM challenge (KDD Cup 2025)! Clone the repository to compete now!
+This repository contains the official implementation of **team CRUISE's** solution for the **KDD Cup 2025 Meta CRAG-MM Challenge**.
 
-**This repository contains**:
-*  **Documentation** on how to submit your agents to the leaderboard
-*  **The procedure** for best practices and information on how we evaluate your agent
-*  **Starter code** for you to get started!
+Our approach won **3rd Place in Task 1: Single-Source Augmentation**.
+
+
+<div align="center">
+
+### [Baiyu Chen](https://baiyuchen.com/)<sup>1,2</sup>, [Wilson Wongso](https://wilsonwongso.dev/)<sup>1,2</sup>, [Xiaoqian Hu](https://scholar.google.com/citations?user=1RUZG-IAAAAJ)<sup>1</sup>, [Yue Tan](https://yuetan031.github.io/)<sup>1</sup>, and [Flora Salim](https://fsalim.github.io/)<sup>1,2</sup>
+
+<sup>1</sup> School of Computer Science and Engineering, University of New South Wales, Sydney, Australia<br/>
+<sup>2</sup> ARC Centre of Excellence for Automated Decision Making + Society
+
+[![arXiv](https://img.shields.io/badge/arXiv-2507.20136-b31b1b.svg)](https://arxiv.org/abs/2507.20136)
+[![Challenge](https://img.shields.io/badge/KDD%20Cup%202025-Meta%20CRAG--MM-blue.svg)](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)
+
+</div>
 
 # Table of Contents
 
-1. [Competition Overview](#-competition-overview)
-2. [Dataset](#-dataset)
-3. [Tasks](#-tasks)
-4. [Evaluation Metrics](#-evaluation-metrics)
-5. [Getting Started](#-getting-started)
+1. [Our Method](#our-method)
+2. [Competition Overview](#-competition-overview)
+3. [Dataset](#-dataset)
+4. [Tasks](#-tasks)
+5. [Evaluation Metrics](#-evaluation-metrics)
+6. [Getting Started](#-getting-started)
    - [How to write your own agent?](#️-how-to-write-your-own-agent)
    - [How to start participating?](#-how-to-start-participating)
       - [Setup](#setup)
       - [How to make a submission?](#-how-to-make-a-submission)
       - [What hardware does my code run on?](#-what-hardware-does-my-code-run-on-)
       - [Baselines](#baselines)
-6. [Frequently Asked Questions](#-frequently-asked-questions)
-7. [Important Links](#-important-links)
+7. [Frequently Asked Questions](#-frequently-asked-questions)
+8. [Important Links](#-important-links)
+
+# 🧠 Our Method
+Our framework consists of four main stages:
+
+## 🔀 Lightweight Query Router
+We first use a lightweight routing module to determine whether a query likely requires external knowledge or real-time retrieval.
+
+## 🔎 Query-Aware Retrieval and Summarization
+We retrieve relevant evidence from available sources and perform query-aware summarization to keep only the most useful supporting context.
+
+## 🧩 Dual-Path Generation
+We generate answers through two complementary pathways:
+
+- a **RAG-based grounded answer path**
+- a **non-RAG / model-prior answer path**
+
+This helps us compare grounded evidence with the model's internal knowledge.
+
+## ✅ Verification and Finalization
+We then apply a **verification-centric answer selection process**, including:
+
+- self-consistency checking
+- structured **Chain-of-Verification (CoV)**
+
+This conservative design is intended to reduce hallucination and improve trustworthiness.
+
+
+## 🏆 Competition Result
+
+Our method achieved:
+
+- **3rd Place** in **Task 1: Single-Source Augmentation**
+- a **training-free** framework with **no additional training or fine-tuning**
+- strong factual reliability through a verification-centric design
+- an effective balance between answer coverage and hallucination mitigation
+
+## 🗂️ Code Structure
+
+The main competition submission file is:
+
+```bash
+agents/mllm_rag_agent.py
+```
 
 # 📖 Competition Overview
 
@@ -162,17 +215,25 @@ You can read more about them in [docs/baselines.md](docs/baselines.md).
 
 # ❓ Frequently Asked Questions
 
-## Which track is this starter kit for?
-This starter kit can be used to submit to any of the three tasks. You can find more information in [docs/submission.md#submitting-to-different-tracks](docs/submission.md#submitting-to-different-tracks).
-
 ## Where can I know more about the dataset schema?
 The dataset schema is described in [docs/dataset.md](docs/dataset.md).
 
 **Best of Luck** :tada: :tada:
 
+If you find this repository useful, please cite our paper.
+```bibtex
+@article{chen2025multi,
+  title={Multi-Stage Verification-Centric Framework for Mitigating Hallucination in Multi-Modal RAG},
+  author={Chen, Baiyu and Wongso, Wilson and Hu, Xiaoqian and Tan, Yue and Salim, Flora},
+  journal={arXiv preprint arXiv:2507.20136},
+  year={2025}
+}
+```
+
 # 📎 Important links
 
 - 💪 Challenge Page: https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025
 - 🗣 Discussion Forum: https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025/discussion
-- 🏆 Leaderboard: https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025/leaderboards
-- 📧 Contact: crag-kddcup-2025@meta.com
+- 🏆 Winner Announcement: https://discourse.aicrowd.com/t/meta-crag-challenge-2025-winners-announcement/17308
+- 🛠️ Workshop: https://kddcup25.github.io/
+- 📧 Contact: `breeze.chen(at)unsw(dot)edu(dot)au`
