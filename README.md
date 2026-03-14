@@ -21,7 +21,7 @@ Our approach won **3rd Place in Task 1: Single-Source Augmentation**.
 
 # Table of Contents
 
-1. [Our Method](#our-method)
+1. [Our Method](#-our-method)
 2. [Competition Overview](#-competition-overview)
 3. [Dataset](#-dataset)
 4. [Tasks](#-tasks)
