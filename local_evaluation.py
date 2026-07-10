@@ -86,7 +86,9 @@ class CRAGEvaluator:
         self.all_turn_data: list[dict[str, any]] = []
         self.session_ids_evaluated: set[str] = set()
         
-        self.tokenizer = Tokenizer.from_pretrained("meta-llama/Llama-3.2-1B-Instruct")
+        
+        
+        self.tokenizer = Tokenizer.from_pretrained("gpt2")
         self.tokenizer.enable_truncation(max_length=MAX_RESPONSE_LENGTH_IN_TOKENS)
 
 

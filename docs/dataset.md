@@ -1,63 +1,63 @@
-# CRAG-MM Dataset Documentation
+# CRAG-MM 数据集文档
 
-**CRAG-MM (Comprehensive RAG Benchmark for Multi-modal, Multi-turn)** is a factual visual-question-answering corpus created to evaluate and train retrieval-augmented generation (RAG) systems in both **single-turn** and **multi-turn** settings.
+**CRAG-MM（Comprehensive RAG Benchmark for Multi-modal, Multi-turn）** 是一个面向事实的视觉问答语料库，用于评估和训练**单轮**和**多轮**场景下的检索增强生成（RAG）系统。
 
-Latest public release: **v0.1.2**
-Available on Hugging Face:
+最新公开发布版本：**v0.1.2**
 
-| Modality    | URL                                                                                                                                                |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Single-turn | [https://huggingface.co/datasets/crag-mm-2025/crag-mm-single-turn-public](https://huggingface.co/datasets/crag-mm-2025/crag-mm-single-turn-public) |
-| Multi-turn  | [https://huggingface.co/datasets/crag-mm-2025/crag-mm-multi-turn-public](https://huggingface.co/datasets/crag-mm-2025/crag-mm-multi-turn-public)   |
+Hugging Face 上可用：
 
----
-
-## 1  Dataset highlights
-
-1. **Images** – A mix of egocentric photos captured with Ray-Ban | Meta Smart Glasses and openly licensed web imagery.
-2. **Thirteen domains** – e.g. shopping, food, math & science.
-3. **Diverse question types** – recognition, multi-hop reasoning, aggregation, comparison and more.
-4. **Single- vs multi-turn** – one Q-A pair or extended dialogues about the same image.
-5. **Quality variations** – normal, low-light, blurred and others.
-6. **Phase 2 evaluation** – every egocentric image is down-sampled to **960 × 1280** before scoring; non-egocentric images retain their native resolution.
+| 模态 | URL |
+|------|-----|
+| 单轮对话 | [https://huggingface.co/datasets/crag-mm-2025/crag-mm-single-turn-public](https://huggingface.co/datasets/crag-mm-2025/crag-mm-single-turn-public) |
+| 多轮对话 | [https://huggingface.co/datasets/crag-mm-2025/crag-mm-multi-turn-public](https://huggingface.co/datasets/crag-mm-2025/crag-mm-multi-turn-public) |
 
 ---
 
-## 2  Data splits
+## 1. 数据集亮点
 
-Public release **v0.1.2** contains the **validation** split only.
-The former *sample* split has been retired.
+1. **图像** – 混合了 Ray-Ban Meta 智能眼镜采集的第一人称照片和公开许可的网络图片
+2. **13 个领域** – 如购物、食品、数学与科学等
+3. **多样化的问题类型** – 识别、多跳推理、聚合、比较等
+4. **单轮 vs 多轮** – 单轮问答或围绕同一张图片的延伸对话
+5. **画质变化** – 正常、低光、模糊等
+6. **第二阶段评估** – 所有第一人称图像在评分前都会被降采样到 **960 × 1280**；非第一人称图像保留原始分辨率
 
 ---
 
-## 3  Data structure (v0.1.2)
+## 2. 数据分片
 
-### A note on the wrapper
+公开发布 **v0.1.2** 仅包含 **validation** 分片。之前的 *sample* 分片已废弃。
 
-In v0.1.2 the inner columns `turns` and `answers` are stored as **dictionary-of-columns** rather than list-of-dicts:
+---
+
+## 3. 数据结构（v0.1.2）
+
+### 关于包装器的说明
+
+在 v0.1.2 中，内部列 `turns` 和 `answers` 以**列字典**而非列表字典的形式存储：
 
 ```text
-# single-turn example
+# 单轮示例
 type(sample["turns"])   # -> <class 'dict'>
-# multi-turn example
-sample["turns"]["query"]        # -> list[str]  (length = number of turns)
-sample["answers"]["ans_full"]   # -> list[str]  (same length)
+# 多轮示例
+sample["turns"]["query"]        # -> list[str]  (长度 = 轮次数)
+sample["answers"]["ans_full"]   # -> list[str]  (同样长度)
 ```
 
-### Single-turn schema
+### 单轮模式
 
 ```jsonc
 {
   "session_id": "string",
-  "image": Image(),          // PIL.Image or None
-  "image_url": "string",     // empty when 'image' is provided
+  "image": Image(),          // PIL.Image 或 None
+  "image_url": "string",     // 当 'image' 已提供时为空
   "turns": {
     "interaction_id": ["string"],
-    "domain": ["int"],
-    "query_category": ["int"],
-    "dynamism": ["int"],
+    "domain": ["int"],      // 领域编码
+    "query_category": ["int"], // 问题类型编码
+    "dynamism": ["int"],    // 动态性编码
     "query": ["string"],
-    "image_quality": ["int"]
+    "image_quality": ["int"] // 画质编码
   },
   "answers": {
     "interaction_id": ["string"],
@@ -66,7 +66,7 @@ sample["answers"]["ans_full"]   # -> list[str]  (same length)
 }
 ```
 
-### Multi-turn schema
+### 多轮模式
 
 ```jsonc
 {
@@ -88,67 +88,67 @@ sample["answers"]["ans_full"]   # -> list[str]  (same length)
 }
 ```
 
-* `interaction_id` aligns each question with its answer.
-* `domain`, `query_category`, `dynamism`, `image_quality` are integer-coded categorical labels.
-* Either `image` **or** `image_url` is guaranteed to be present.
+- `interaction_id` 将每个问题与其答案对齐
+- `domain`、`query_category`、`dynamism`、`image_quality` 是整数编码的分类标签
+- 保证 `image` 或 `image_url` 中至少有一个存在
 
 ---
 
-## 4  Quick access examples
+## 4. 快速访问示例
 
 ```python
 from datasets import load_dataset
 
-# --- load datasets ---------------------------------------------------------
+# --- 加载数据集 ---------------------------------------------------------
 st = load_dataset("crag-mm-2025/crag-mm-single-turn-public",
                   split="validation", revision="v0.1.2")
 mt = load_dataset("crag-mm-2025/crag-mm-multi-turn-public",
                   split="validation", revision="v0.1.2")
 
-# --- iterate over turns, schema-proof --------------------------------------
+# --- 遍历轮次，适配不同模式 ---------------------------------------------
 def iter_turns(sample):
-    """Yield (turn_dict, answer_dict) pairs in either single- or multi-turn rows."""
+    """返回单轮或多轮行中的 (turn_dict, answer_dict) 对"""
     if isinstance(sample["turns"], dict):
         n = len(sample["turns"]["interaction_id"])
         for i in range(n):
             turn =  {k: v[i] for k, v in sample["turns"].items()}
             ans  =  {k: v[i] for k, v in sample["answers"].items()}
             yield turn, ans
-    else:  # older releases only
+    else:  # 仅旧版本
         for turn, ans in zip(sample["turns"], sample["answers"]):
             yield turn, ans
 
-# inspect first multi-turn conversation
+# 查看第一个多轮对话
 for t, a in iter_turns(mt[0]):
     print(f"Q: {t['query']}\nA: {a['ans_full']}\n")
 
-# show the (possibly down-sampled) image
+# 显示（可能已降采样的）图像
 import matplotlib.pyplot as plt
 plt.imshow(st[0]["image"])
 plt.axis("off")
 plt.show()
 ```
 
-> **Tip for Phase 2:** if you feed raw pixels to your model, resize egocentric inputs to `width=960, height=1280` before preprocessing so your pipeline matches evaluation conditions.
+> **第二阶段提示**：如果你将原始像素输入模型，请在预处理前将第一人称输入调整为 `width=960, height=1280`，以确保你的流程与评估条件一致。
 
 ---
 
-## 5  No-code users—good news
+## 5. 无需编码的用户 — 好消息
 
-If you rely on the provided `crag_batch_iterator.py` (updated in the repository), no code changes are required. The iterator transparently:
+如果你使用仓库中提供的 `crag_batch_iterator.py`（已更新），不需要任何代码更改。该迭代器透明地：
 
-* Accepts both list-of-dicts (v0.1.1) and dict-of-columns (v0.1.2) layouts.
-* Downloads images when only `image_url` is present.
-* Resizes egocentric pictures to 960 × 1280.
+- 接受列表字典（v0.1.1）和列字典（v0.1.2）两种布局
+- 当只有 `image_url` 存在时自动下载图像
+- 将第一人称图片调整为 960 × 1280
 
-Pull the latest commit and continue training.
+拉取最新提交并继续训练即可。
 
 ---
 
-## 6  License and citation
+## 6. 许可证与引用
 
-* **License:** [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0)
-* **Citation:**
+- **许可证**：[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0)
+- **引用**：
 
 ```bibtex
 @inproceedings{crag-mm-2025,

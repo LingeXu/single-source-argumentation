@@ -1,226 +1,281 @@
 [![banner image](https://images.aicrowd.com/raw_images/challenges/social_media_image_file/1155/3d44411079169ec5776a.jpg)](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)
 
-# [Meta CRAG-MM: Comprehensive RAG Benchmark for Multi-Modal, Multi-Turn Dialogue Challenge](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)
+# [Meta CRAG-MM：多模态多轮对话综合 RAG 基准挑战赛](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)
 
-This repository contains the official implementation of **team CRUISE's** solution for the **KDD Cup 2025 Meta CRAG-MM Challenge**.
+本仓库是 **CRUISE 团队** 在 **KDD Cup 2025 Meta CRAG-MM 挑战赛** 中的官方实现。
 
-Our approach won **3rd Place in Task 1: Single-Source Augmentation**.
-
+我们的方法在 **Task 1：单源增强 中获得第 3 名**。
 
 <div align="center">
 
 ### [Baiyu Chen](https://baiyuchen.com/)<sup>1,2</sup>, [Wilson Wongso](https://wilsonwongso.dev/)<sup>1,2</sup>, [Xiaoqian Hu](https://scholar.google.com/citations?user=1RUZG-IAAAAJ)<sup>1</sup>, [Yue Tan](https://yuetan031.github.io/)<sup>1</sup>, and [Flora Salim](https://fsalim.github.io/)<sup>1,2</sup>
 
-<sup>1</sup> School of Computer Science and Engineering, University of New South Wales, Sydney, Australia<br/>
-<sup>2</sup> ARC Centre of Excellence for Automated Decision Making + Society
+<sup>1</sup> 新南威尔士大学计算机科学与工程学院，澳大利亚悉尼<br/>
+<sup>2</sup> ARC 自动化决策与社会卓越研究中心
 
 [![arXiv](https://img.shields.io/badge/arXiv-2507.20136-b31b1b.svg)](https://arxiv.org/abs/2507.20136)
 [![Challenge](https://img.shields.io/badge/KDD%20Cup%202025-Meta%20CRAG--MM-blue.svg)](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)
 
 </div>
 
-# Table of Contents
+# 目录
 
-1. [Our Method](#-our-method)
-2. [Competition Overview](#-competition-overview)
-3. [Dataset](#-dataset)
-4. [Tasks](#-tasks)
-5. [Evaluation Metrics](#-evaluation-metrics)
-6. [Getting Started](#-getting-started)
-   - [How to write your own agent?](#️-how-to-write-your-own-agent)
-   - [How to start participating?](#-how-to-start-participating)
-      - [Setup](#setup)
-      - [How to make a submission?](#-how-to-make-a-submission)
-      - [What hardware does my code run on?](#-what-hardware-does-my-code-run-on-)
-      - [Baselines](#baselines)
-7. [Frequently Asked Questions](#-frequently-asked-questions)
-8. [Important Links](#-important-links)
+1. [我们的方法](#-我们的方法)
+2. [比赛概述](#-比赛概述)
+3. [数据集](#-数据集)
+4. [比赛任务](#-比赛任务)
+5. [评估指标](#-评估指标)
+6. [快速开始](#-快速开始)
+   - [如何编写自己的 Agent？](#️-如何编写自己的-agent)
+   - [如何参与比赛？](#-如何参与比赛)
+      - [环境配置](#环境配置)
+      - [如何提交？](#-如何提交)
+      - [代码运行在什么硬件上？](#-代码运行在什么硬件上)
+      - [基线模型](#基线模型)
+7. [常见问题](#-常见问题)
+8. [重要链接](#-重要链接)
 
-# 🧠 Our Method
-Our framework consists of four main stages:
+# 🧠 我们的方法
 
-## 🔀 Lightweight Query Router
-We first use a lightweight routing module to determine whether a query likely requires external knowledge or real-time retrieval.
+我们的框架由四个主要阶段组成：
 
-## 🔎 Query-Aware Retrieval and Summarization
-We retrieve relevant evidence from available sources and perform query-aware summarization to keep only the most useful supporting context.
+## 🔀 轻量级查询路由
+首先使用轻量级路由模块判断查询是否需要外部知识或实时检索。
 
-## 🧩 Dual-Path Generation
-We generate answers through two complementary pathways:
+## 🔎 查询感知检索与摘要
+从可用来源检索相关证据，并进行查询感知的摘要，仅保留最有用的支撑上下文。
 
-- a **RAG-based grounded answer path**
-- a **non-RAG / model-prior answer path**
+## 🧩 双路径生成
+通过两条互补路径生成答案：
 
-This helps us compare grounded evidence with the model's internal knowledge.
+- **基于 RAG 的增强答案路径**
+- **非 RAG / 模型先验知识答案路径**
 
-## ✅ Verification and Finalization
-We then apply a **verification-centric answer selection process**, including:
+用于比较增强证据与模型内部知识的一致性。
 
-- self-consistency checking
-- structured **Chain-of-Verification (CoV)**
+## ✅ 验证与最终裁决
+采用**以验证为中心的答案选择流程**，包括：
 
-This conservative design is intended to reduce hallucination and improve trustworthiness.
+- 自洽性检查 (Self-Consistency)
+- 结构化验证链 (Chain-of-Verification, CoV)
 
+这种保守的设计旨在减少幻觉，提高可信度。
 
-## 🏆 Competition Result
+## 🏆 比赛成绩
 
-Our method achieved:
+我们的方法取得了：
 
-- **3rd Place** in **Task 1: Single-Source Augmentation**
-- a **training-free** framework with **no additional training or fine-tuning**
-- strong factual reliability through a verification-centric design
-- an effective balance between answer coverage and hallucination mitigation
+- **Task 1：单源增强 第 3 名**
+- **无需训练**的框架，无需额外训练或微调
+- 通过以验证为中心的设计，实现了强大的事实可靠性
+- 在答案覆盖率和幻觉抑制之间实现了有效平衡
 
-## 🗂️ Code Structure
+## 🗂️ 代码结构
 
-The main competition submission file is:
+主要比赛提交文件：
 
 ```bash
-agents/mllm_rag_agent.py
+agents/mllm_rag_agent.py       # 获奖方案：多阶段验证 RAG Agent (需要 CUDA GPU)
+agents/task1_agent.py           # Task 1 Agent：MLX 版，适配 Apple Silicon / Mac
+agents/base_agent.py            # Agent 基类
+agents/rag_agent.py             # 简单 RAG Agent 示例
+agents/random_agent.py          # 随机回答 Agent（测试用）
+agents/vanilla_llama_vision_agent.py  # 纯视觉语言模型 Agent
+agents/user_config.py           # Agent 配置文件
+local_evaluation.py             # 本地评估脚本
 ```
 
-# 📖 Competition Overview
+# 📖 比赛概述
 
-Have you tried asking smart glasses to tell you the history of a landmark when travelling to a new country? Have you used wearable devices to translate foreign languages reali-time to order food in a foreign resturant? Have you ever forgoten where you parked your car and thankfully found the location stored in an image remidner on your glasses? Wearable devices are revolutionizing the way people communicate, work, and entertain. To make wearable devices truly valuable in daily life, they must provide relevant and accurate information tailored to users' needs.
+你是否曾尝试在出国旅行时用智能眼镜查询地标的历史？是否曾用可穿戴设备实时翻译外语来点餐？是否曾因忘记停车位置，幸好在眼镜里的图像提醒中找到了位置？可穿戴设备正在彻底改变人们交流、工作和娱乐的方式。为了让可穿戴设备在日常生活中真正发挥作用，它们必须提供与用户需求相关的准确信息。
 
-Vision Large Language Models (VLLMs) have undergone significant advancements in recent years, empowering multi-modal understanding and visual question answering (VQA) capabilities behind smart glasses. Despite the progress, VLLMs still face a major challenge: generating hallucinated answers. Studies have shown that VLLMs encounter substantial difficulties in handling queries involving long-tail entities; these models also encounter challenges for handling complex queries that require integration of different capabilities: recognition, ocr, knowledge, and generation.
+视觉大语言模型（VLLMs）近年来取得了显著进展，为智能眼镜背后的多模态理解和视觉问答（VQA）功能提供了支持。尽管取得了这些进步，VLLMs 仍面临一个重大挑战：**生成幻觉答案**。研究表明，VLLMs 在处理涉及长尾实体的查询时面临巨大困难；这些模型在处理需要整合识别、OCR、知识和生成等多种能力的复杂查询时同样困难重重。
 
-The Retrieval-Augmented Generation (RAG) paradigm has expanded to accommodate multi-modal (MM) input, and demonstrated promise in addressing the knowledge limitation of VLLM. Given an image and a question, an MM RAG system constructs a search query by synthesizing information from the image and the question, searches external sources to retrieve relevant information, and then provides grounded answers to address the question.
+检索增强生成（RAG）范式已扩展以适应多模态（MM）输入，并在解决 VLLM 的知识局限方面展现出了潜力。给定一张图片和一个问题，MM RAG 系统通过综合图片和问题中的信息构建搜索查询，搜索外部来源以检索相关信息，然后提供有据可依的答案来回答用户问题。
 
-# 📊 Dataset
+# 📊 数据集
 
-CRAG-MM contains three parts of data: the image set, the QA set, and the contents for retrieval.
+CRAG-MM 包含三部分数据：图像集、问答对和检索内容。
 
-The datasets can be accessed as follows:
-- **Single-Turn:** [https://huggingface.co/datasets/crag-mm-2025/crag-mm-single-turn-public](https://huggingface.co/datasets/crag-mm-2025/crag-mm-single-turn-public)
-- **Multi-Turn:** [https://huggingface.co/datasets/crag-mm-2025/crag-mm-multi-turn-public](https://huggingface.co/datasets/crag-mm-2025/crag-mm-multi-turn-public)
+数据集可通过以下链接访问：
+- **单轮对话：** [https://huggingface.co/datasets/crag-mm-2025/crag-mm-single-turn-public](https://huggingface.co/datasets/crag-mm-2025/crag-mm-single-turn-public)
+- **多轮对话：** [https://huggingface.co/datasets/crag-mm-2025/crag-mm-multi-turn-public](https://huggingface.co/datasets/crag-mm-2025/crag-mm-multi-turn-public)
 
-## 🖼️ Image set
-CRAG-MM contains two types of images: egocentric images and normal images. The egocentric images were collected using RayBan Meta Smart Glasses 4 from first-person perspective. The normal images were collected from publicly available images on the web.
+## 🖼️ 图像集
+CRAG-MM 包含两种类型的图像：**第一人称视角图像**和**普通图像**。第一人称视角图像是使用 RayBan Meta 智能眼镜从第一视角采集的。普通图像则来自互联网上的公开图片。
 
-## 📝 Question Answer Pairs
-CRAG-MM covers 14 domains: Book, Food, General object recognition, Math and science, Nature, Pets, Plants and Gardening, Shopping, Sightseeing, Sports and games, Style and fashion, Text understanding, Vehicles, and Others, representing popular use cases that wearable device users would like to engage with. It also includes 4 types of questions, ranging from simple questions that can be answered based on the image to complex questions that require retrieving multiple sources and synthesizing an answer.
+## 📝 问答对
+CRAG-MM 涵盖 **14 个领域**：书籍、食品、通用物体识别、数学与科学、自然、宠物、植物与园艺、购物、观光、体育与游戏、时尚与风格、文字理解、车辆及其他。代表了可穿戴设备用户日常使用的主要场景。同时包含 **4 种问题类型**，从可直接基于图像回答的简单问题，到需要检索多个来源并综合答案的复杂问题。
 
-## 📁 Retrieval Contents
-The dataset includes a mock image search API and a mock web search API to simulate real-world knowledge sources from which RAG solutions retrieve from.
+## 📁 检索内容
+数据集包含模拟图像搜索 API 和模拟网页搜索 API，用于模拟 RAG 方案检索的真实知识来源。
 
-You can download the mock APIs with 
-```
+安装模拟 API：
+```bash
 pip install -U cragmm-search-pipeline
 ```
 
-[docs/search_api.md](docs/search_api.md) contains the documentations to the mock APIs, and [agents/rag_agent.py](agents/rag_agent.py) shows a sample usage of the APIs. 
+- [docs/search_api.md](docs/search_api.md) 包含模拟 API 的文档
+- [agents/rag_agent.py](agents/rag_agent.py) 展示了 API 的示例用法
 
-# 👨‍💻👩‍💻 Tasks
+# 👨‍💻👩‍💻 比赛任务
 
-We designed three competition tasks:
+比赛设有三个任务：
 
-## Task #1: Single-Source Augmentation
-Task #1 provides an image mock API to access information from an underlying image-based mock KG. The mock KG is indexed by the image, and stores structured data associated with the image; answers to the questions may or may not exist in the mock KG. The mock API takes an image as input, and returns similar images from the mock KG along with structured data associated with each image to support answer generation. This task aims to test basic answer generation capability of MM-RAG systems.
+## Task #1：单源增强 (Single-Source Augmentation) ⭐
+Task #1 提供图像模拟 API，访问底层的基于图像的结构化知识图谱（mock KG）。该 KG 以图像为索引，存储与图像相关的结构化数据；问题的答案可能存在，也可能不存在于 KG 中。模拟 API 以图像为输入，返回 KG 中的相似图像及其结构化数据，以辅助答案生成。此任务旨在**测试 MM-RAG 系统的基本答案生成能力**。
 
-## Task #2: Multi-Source Augmentation
-Task #2 in addition provides a web search mock API as a second retrieval source. The web pages are likely to provide useful information for answering the question, but meanwhile also contain noises. This task aims to test how well the MM-RAG system synthesizes information from different sources.
+> 📌 **难度系数：1.0**
 
-## Task #3: Multi-Turn QA
-Task #3 tests the system's ability to conduct multi-turn conversations. Each conversation contains 2–6 turns. Except the first turn, questions in later turns may or may not need the image for answering the questions. Task #3 tests context understanding for smooth multi-turn conversations.
+## Task #2：多源增强 (Multi-Source Augmentation)
+Task #2 额外提供**网页搜索模拟 API** 作为第二个检索来源。网页内容可能包含回答问题的有用信息，但同时也包含大量噪声。此任务旨在测试 **MM-RAG 系统如何综合不同来源的信息**。
 
+> 📌 **难度系数：1.2**
 
-# 📏 Evaluation Metrics
+## Task #3：多轮问答 (Multi-turn QA)
+Task #3 测试系统进行多轮对话的能力。每次对话包含 **2–6 轮**。除首轮外，后续问题可能需要也可能不需要图像来回答。Task #3 测试 **上下文理解能力**，以实现流畅的多轮对话。
 
-For tasks #1 and #2, we adopt exactly the same metrics and methods used in the CRAG competition ([KDD Cup 2024](https://www.aicrowd.com/challenges/meta-comprehensive-rag-benchmark-kdd-cup-2024)) to assess the performance of the MM RAG systems.
+> 📌 **难度系数：1.5**
 
-## Single-Turn QA (Tasks #1 and #2)
-For each question in the evaluation set, we score the answer with:
-- Perfect (fully correct): Score 1
-- Acceptable (useful w. minor non-harmful errors): Score 0.5
-- Missing (e.g., "I don't know"): Score 0
-- Incorrect (wrong or irrelevant): Score -1
+# 📏 评估指标
 
-We then use Truthfulness as the average score from all examples in the evaluation set for a given MM-RAG system. We compute an average score for each domain, and take the weighted average across all domains for the final score.
+对于 Task #1 和 #2，我们采用与 CRAG 竞赛（KDD Cup 2024）完全相同的指标和方法来评估 MM RAG 系统的性能。
 
-## Multi-Turn QA
-We adapt the method in [1], which is closest to the information-seeking flavor of conversations. In particular, we stop a conversation when the answers in two consecutive turns are wrong and consider answers to all remaining questions in the same conversation as missing–mimicking the behavior of real users when they lose trust or feel frustrated after repeated failures. We then take the average score of all multi-turn conversations.
+## 单轮问答（Task #1 和 #2）
+对评测集中的每个问题，答案评分为：
 
-[1] Bai et al., "MT-Bench-101: A Fine-Grained Benchmark for Evaluating Large Language Models in Multi-Turn Dialogues". Available at: https://aclanthology.org/2024.acl-long.401/
+| 等级 | 分数 | 说明 |
+|------|------|------|
+| 完美 (Perfect) | **1** | 完全正确 |
+| 可接受 (Acceptable) | **0.5** | 有用但存在轻微无害的错误 |
+| 缺失 (Missing) | **0** | 如 "I don't know" |
+| 错误 (Incorrect) | **-1** | 错误或不相关的答案 |
 
-# 🏁 Getting Started
+**真实性得分 (Truthfulness Score)** = 所有样本的平均分，同时也是排行榜上的**最终排名依据**。对每个领域分别计算平均分，再按所有领域的加权平均得出最终分数。
 
-1. **Sign up** to join the competition [on the AIcrowd website](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025).
-2. **Fork** this starter kit repository. You can use [this link](https://gitlab.aicrowd.com/aicrowd/challenges/meta-comprehensive-rag-benchmark-kdd-cup-2025/meta-comprehensive-rag-benchmark-starter-kit/-/forks/new) to create a fork.
-3. **Clone** your forked repo and start developing your agent.
-4. **Develop** your agent(s) following the template in [how to write your own agent](#-how-to-write-your-own-agent) section.
-5. [**Submit**](#-how-to-make-a-submission) your trained models to [AIcrowd Gitlab](https://gitlab.aicrowd.com) for evaluation.
+## 多轮问答
+当连续两轮的答案都错误时，对话终止，该对话中剩余问题的答案均视为缺失（模拟真实用户失去信任后放弃对话的行为）。最终取所有多轮对话的平均分。
 
-# ✍️ How to write your own agent?
+# 🏁 快速开始
 
-Please follow the instructions in [agents/README.md](agents/README.md) for instructions and examples on how to write your own agents for this competition.
+1. **注册报名** 参加 [AIcrowd 官网](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)的比赛。
+2. **Fork** 本入门套件仓库。
+3. **克隆** fork 后的仓库，开始开发你的 Agent。
+4. **开发** 你的 Agent，参考 [如何编写自己的 Agent](#️-如何编写自己的-agent) 部分的模板。
+5. [**提交**](#-如何提交) 到 [AIcrowd Gitlab](https://gitlab.aicrowd.com) 进行评估。
 
-# 🚴 How to start participating?
+# ✍️ 如何编写自己的 Agent？
 
-## Setup
+请参考 [agents/README.md](agents/README.md) 中的说明和示例，了解如何为此比赛编写自己的 Agent。
 
-1. **Add your SSH key** to AIcrowd GitLab
+## 🎯 Task 1 快速上手（Mac / Apple Silicon）
 
-You can add your SSH Keys to your GitLab account by going to your profile settings [here](https://gitlab.aicrowd.com/-/user_settings/ssh_keys). If you do not have SSH Keys, you will first need to [generate one](https://docs.gitlab.com/ee/user/ssh.html).
+本项目提供了适配 Mac 的 Task 1 Agent (`agents/task1_agent.py`)，使用 MLX + Qwen2-VL-2B 实现 Apple Silicon 原生加速：
 
-2. **Fork the repository**. You can use [this link](https://gitlab.aicrowd.com/aicrowd/challenges/meta-comprehensive-rag-benchmark-kdd-cup-2025/meta-comprehensive-rag-benchmark-starter-kit/-/forks/new) to create a fork.
+```bash
+# 1. 安装依赖
+pip install -r requirements.txt
+pip install mlx-vlm
 
-3. **Clone the repository**
+# 2. 确认使用 Task 1 Agent
+# 编辑 agents/user_config.py，确保：
+# UserAgent = Task1SingleSourceAgent
+
+# 3. 运行评估 (不启用语义评估，Mac 上无需 OpenAI API)
+python local_evaluation.py \
+    --dataset-type single-turn \
+    --split validation \
+    --num-conversations 100 \
+    --suppress-web-search-api \
+    --eval-model None
+```
+
+## 🚀 优化方向 (来自 PPTX 实训指导)
+
+| 优化方向 | 说明 |
+|----------|------|
+| **优化 System Prompt** | 根据问题类型（视觉/知识/推理/比较）设计分层指令 |
+| **模型生成后处理** | 清理输出格式、统一 IDK 表达、截断过长答案 |
+| **参数调优** | 调整温度、检索数量、相似度阈值等参数 |
+| **设计更好的 Agent** | 查询路由、分数过滤、置信度评估、双路径生成 |
+| **不确定性处理** | 基于检索质量和置信度分数判断是否回复 "I don't know" |
+| **检索优化** | 根据问题困难程度调整检索策略，提高匹配精度 |
+
+# 🚴 如何参与比赛？
+
+## 环境配置
+
+1. **添加 SSH Key** 到 AIcrowd GitLab
+
+在 [GitLab 个人设置](https://gitlab.aicrowd.com/-/user_settings/ssh_keys)中添加 SSH Key。如果没有，需要先生成一个。
+
+2. **Fork 仓库**
+
+3. **克隆仓库**
     ```bash
     git clone git@gitlab.aicrowd.com:<YOUR-AICROWD-USERNAME>/meta-crag-submission.git
     cd meta-crag-submission
     ```
 
-4. **Install** competition specific dependencies!
+4. **安装依赖**
     ```bash
-    cd meta-crag-submission
     pip install -r requirements.txt
     ```
-**Note**: The installation of vLLM may depend on specific CUDA or PyTorch versions, so it is possible that `pip install -r requirements.txt` fails. If that happens, please find an appropriate version on the [vLLM website](https://docs.vllm.ai/en/latest/). To run LLaMA-3.2-Vision, we need at least `vllm>=0.6.2`. 
+**注意**：vLLM 的安装可能依赖特定的 CUDA 或 PyTorch 版本，`pip install -r requirements.txt` 可能会失败。如果失败，请在 [vLLM 官网](https://docs.vllm.ai/en/latest/) 寻找合适版本。运行 LLaMA-3.2-Vision 至少需要 `vllm>=0.6.2`。
 
-5. Write your own agent as described in [agents/README.md](agents/README.md).
+    - **Mac 用户**：只需安装基础依赖 + `mlx-vlm`，无需 vLLM
 
-6. Test your agent locally using `python local_evaluation.py`.
+5. 按照 [agents/README.md](agents/README.md) 编写自己的 Agent。
 
-7. Accept the Challenge Rules on the main [challenge page](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025) by clicking on the **Participate** button. Also accept the Challenge Rules on the Task specific page (link on the challenge page) that you want to submit to.
+6. 使用 `python local_evaluation.py` 在本地测试 Agent。
 
-8. Make a submission as described in [How to make a submission](#-how-to-make-a-submission) section.
+7. 在[比赛页面](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)点击 **Participate** 按钮接受比赛规则。
 
-## 📮 How to make a submission?
+8. 按照[提交指南](#-如何提交)提交。
 
-Please follow the instructions in [docs/submission.md](docs/submission.md) to make your first submission.
-This also includes instructions on [specifying your software runtime](docs/submission.md#specifying-software-runtime-and-dependencies), [code structure](docs/submission.md#code-structure-guidelines), [submitting to different tracks](docs/submission.md#submitting-to-different-tracks).
+## 📮 如何提交？
 
-For detailed instructions on securely setting up your submissions as Public Gated Hugging Face models, please refer to [Using Gated Hugging Face Models in Your Submission 🔒](huggingface-gated-models.md).
+请参考 [docs/submission.md](docs/submission.md) 进行首次提交。
 
-**Note**: **Remember to accept the Challenge Rules** on the challenge page, **and** the task page before making your first submission.
+## 💻 代码运行在什么硬件上？
 
-## 💻 What hardware does my code run on?
-All submissions will be run on a single `g6e.2xlarge` instance with an `NVIDIA L40s GPU` with `48GB of GPU memory` on AWS. Please note that:
-- `LLaMA 3.2 11B-Vision` and `Pixtral 12B` in full precision can run directly
-- `Llama 3.2 90B-Vision` in full precision cannot be directly run on this GPU instance. Quantization or other techniques need to be applied to make the model runnable
+所有提交将在 AWS 上的单台 **`g6e.2xlarge`** 实例上运行，配备 **NVIDIA L40s GPU（48GB 显存）**。请注意：
 
-Moreover, the following restrictions will also be imposed:
-- Network connection will be disabled
-- Each conversation-turn will have a time-out limit of 10 seconds, and a batch of N turns (as configured by you `.get_batch_size()` function) will have a timeout of `N * 10 seconds`. 
-- To encourage concise answers, each answer will be truncated to 75 bpe tokens in the auto-eval
+- `LLaMA 3.2 11B-Vision` 和 `Pixtral 12B` 可以全精度直接运行
+- `Llama 3.2 90B-Vision` 全精度无法直接运行，需要量化等技术手段才能运行
 
-## 🏁 Baseline
-We include three baselines for demonstration purposes:
-1. RandomAgent: A simple agent that generates random responses
-2. LlamaVisionModel: A vision-language agent based on Meta's LLaMA 3.2 11B Vision Instruct model
-3. SimpleRAGAgent: A RAG-based agent that uses the unified search pipeline for retrieving relevant information
+此外，还有以下限制：
+- **网络连接将被禁用**
+- 每轮对话有 **10 秒超时**限制，N 轮对话的批次有 `N × 10 秒` 超时
+- 为鼓励简洁回答，每个答案将在自动评估中被截断为 **75 个 BPE token**
 
-You can read more about them in [docs/baselines.md](docs/baselines.md).
+## 基线模型
 
-# ❓ Frequently Asked Questions
+我们提供了三个基线模型：
 
-## Where can I know more about the dataset schema?
-The dataset schema is described in [docs/dataset.md](docs/dataset.md).
+| Agent | 说明 |
+|-------|------|
+| **RandomAgent** | 生成随机回答的简单 Agent |
+| **LlamaVisionModel** | 基于 Meta LLaMA 3.2 11B Vision Instruct 的视觉语言 Agent |
+| **SimpleRAGAgent** | 使用统一搜索管道检索相关信息的 RAG Agent |
 
-**Best of Luck** :tada: :tada:
+详见 [docs/baselines.md](docs/baselines.md)。
 
-If you find this repository useful, please cite our paper.
+# ❓ 常见问题
+
+**Q: 哪里可以了解更多关于数据集结构的信息？**
+数据集结构描述在 [docs/dataset.md](docs/dataset.md)。
+
+**Q: 为什么提交失败？**
+常见原因：
+1. 未在 `aicrowd.json` 中指定所需的 HuggingFace 模型 → 评测时无网络，无法下载
+2. 私有模型未授权给 `aicrowd` HuggingFace 账号
+3. 代码超时（单轮 10s、批次 N×10s）
+4. Agent 初始化超过 10 分钟
+
+**祝你好运！** 🎉 🎉
+
+如果你觉得这个仓库有用，请引用我们的论文：
 ```bibtex
 @article{chen2025multi,
   title={Multi-Stage Verification-Centric Framework for Mitigating Hallucination in Multi-Modal RAG},
@@ -230,10 +285,10 @@ If you find this repository useful, please cite our paper.
 }
 ```
 
-# 📎 Important links
+# 📎 重要链接
 
-- 💪 Challenge Page: https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025
-- 🗣 Discussion Forum: https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025/discussion
-- 🏆 Winner Announcement: https://discourse.aicrowd.com/t/meta-crag-challenge-2025-winners-announcement/17308
-- 🛠️ Workshop: https://kddcup25.github.io/
-- 📧 Contact: `breeze.chen(at)unsw(dot)edu(dot)au`
+- 💪 [比赛页面](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025)
+- 🗣 [讨论论坛](https://www.aicrowd.com/challenges/meta-crag-mm-challenge-2025/discussion)
+- 🏆 [获奖公告](https://discourse.aicrowd.com/t/meta-crag-challenge-2025-winners-announcement/17308)
+- 🛠️ [Workshop](https://kddcup25.github.io/)
+- 📧 联系邮箱：`breeze.chen(at)unsw(dot)edu(dot)au`

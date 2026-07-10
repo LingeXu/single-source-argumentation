@@ -1,35 +1,35 @@
-# Submission Guidelines 🚀
+# 提交指南 🚀
 
-Ready to showcase your **CRAG-MM** solution on the leaderboard? Follow the steps below to **submit** your model to the **Meta CRAG-MM** challenge with confidence! 🎉
+准备好将你的 **CRAG-MM** 方案展示在排行榜上了吗？按以下步骤将你的模型**提交**到 **Meta CRAG-MM** 挑战赛！🎉
 
 ---
 
-## 1. Repository & Setup
+## 1. 仓库与配置
 
-### 1.1 Clone the Starter Kit 🏁
+### 1.1 克隆入门套件 🏁
 
-1. **Fork** the official **[Meta CRAG-MM Starter Kit](https://gitlab.aicrowd.com/aicrowd/challenges/meta-comprehensive-rag-benchmark-kdd-cup-2025/meta-comprehensive-rag-benchmark-starter-kit/-/tree/main)** repository from the challenge page.
-2. **Clone** your fork locally:
+1. **Fork** 官方的 **[Meta CRAG-MM Starter Kit](https://gitlab.aicrowd.com/aicrowd/challenges/meta-comprehensive-rag-benchmark-kdd-cup-2025/meta-comprehensive-rag-benchmark-starter-kit/-/tree/main)** 仓库
+2. **克隆**你 fork 的仓库到本地：
    ```bash
    git clone git@gitlab.aicrowd.com:<YOUR-AICROWD-USERNAME>/<YOUR-FORK>.git
    cd <YOUR-FORK>
    ```
 
-### 1.2 Add Your Agent Code 🧩
+### 1.2 添加你的 Agent 代码 🧩
 
-1. Navigate to the `agents/` directory in your cloned repo.
-2. Create or modify a file (e.g., `my_agent.py`) that implements the [BaseAgent](../agents/base_agent.py) interface.
-3. In `agents/user_config.py`, **import** your new agent class and **assign** it to `UserAgent`.
+1. 进入克隆仓库中的 `agents/` 目录
+2. 创建或修改文件（如 `my_agent.py`），实现 [BaseAgent](../agents/base_agent.py) 接口
+3. 在 `agents/user_config.py` 中，**导入**你的新 Agent 类并**赋值**给 `UserAgent`
 
-> **Remember**: During evaluation, your code will run in an **offline environment** (no internet!). This means you must **pre-download** or reference **Hugging Face** models in such a way that they are available offline. See [below](#link-to-hf) for instructions on specifying HF models.
+> **注意**：评估期间，你的代码将在**离线环境**（无互联网！）中运行。这意味着你必须**预下载**或以其他方式引用 **Hugging Face** 模型，使其在离线状态下可用。参见[下方说明](#link-to-hf)了解如何指定 HF 模型。
 
 ---
 
-## 2. Specifying Models & Dependencies
+## 2. 指定模型与依赖
 
 ### 2.1 aicrowd.json 🗒️
 
-In your repository’s root directory, create or update the `aicrowd.json` file to specify key details for your submission:
+在仓库根目录创建或更新 `aicrowd.json`，指定提交的关键信息：
 
 ```json
 {
@@ -49,34 +49,34 @@ In your repository’s root directory, create or update the `aicrowd.json` file 
 }
 ```
 
-- **`challenge_id`**: Select from one of the following:
-  - `"single-source-augmentation"`
-  - `"multi-source-augmentation"`
-  - `"multi-turn-qa"`
+- **`challenge_id`**：选择以下之一：
+  - `"single-source-augmentation"` — Task 1: 单源增强
+  - `"multi-source-augmentation"` — Task 2: 多源增强
+  - `"multi-turn-qa"` — Task 3: 多轮问答
 
-- **`gpu`**: Set to `true` if GPU acceleration is required, else `false`.
+- **`gpu`**：需要 GPU 加速设为 `true`，否则设为 `false`
 
-- **`hf_models`**: List all Hugging Face models your agent uses. These models **must** be publicly accessible or explicitly shared with the `aicrowd` Hugging Face account. Before evaluation, these models will be pre-downloaded and cached locally in a container with no internet access (`HF_HUB_OFFLINE=1`).
+- **`hf_models`**：列出你的 Agent 使用的所有 Hugging Face 模型。这些模型**必须**是公开的，或者已明确授权给 `aicrowd` Hugging Face 账号。评估前，这些模型会被预下载并缓存在一个没有互联网的容器中（`HF_HUB_OFFLINE=1`）
 
-  > The `hf_models` entries support parameters compatible with [`huggingface_hub.snapshot_download`](https://huggingface.co/docs/huggingface_hub/v0.30.2/en/package_reference/file_download#huggingface_hub.snapshot_download).
+  > `hf_models` 条目支持与 [`huggingface_hub.snapshot_download`](https://huggingface.co/docs/huggingface_hub/v0.30.2/en/package_reference/file_download#huggingface_hub.snapshot_download) 兼容的参数
 
-For detailed instructions on securely setting up your submissions as Public Gated Hugging Face models, please refer to [Using Gated Hugging Face Models in Your Submission 🔒](huggingface-gated-models.md).
+关于如何安全地将私有 Hugging Face 模型用于提交的详细说明，请参考[使用受限 Hugging Face 模型提交 🔒](huggingface-gated-models.md)。
 
 ### 2.3 requirements.txt 🗒️
 
-All Python dependencies must be declared in `requirements.txt`. For example:
+所有 Python 依赖必须在 `requirements.txt` 中声明。例如：
 
 ```
 torch>=2.0.0
 transformers>=4.36.0
 pillow>=10.0.0
 numpy>=1.24.0
-# Include any additional libraries your agent needs
+# 包含你的 Agent 需要的任何其他库
 ```
 
-### 2.4 Dockerfile 🐳 (Optional)
+### 2.4 Dockerfile 🐳（可选）
 
-If you wish to further customize your environment, you can edit or create a `Dockerfile` in your repository root. For example:
+如果你想进一步自定义运行环境，可以编辑或创建仓库根目录中的 `Dockerfile`。例如：
 
 ```dockerfile
 FROM nvidia/cuda:12.2.0-cudnn8-runtime-ubuntu22.04
@@ -86,56 +86,57 @@ COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# (Optional) Copy your code
+# (可选) 复制代码
 COPY . /app
 
-# (Optional) Specify environment variables
+# (可选) 指定环境变量
 ENV HF_HUB_OFFLINE=1
 ```
 
 ---
 
-## 3. Workflow for Submissions
+## 3. 提交流程
 
-### 3.1 Commit & Push Your Code 🌐
+### 3.1 提交并推送代码 🌐
 
-Once you have:
-1. Implemented or updated your agent in `agents/`
-2. Specified your models in `aicrowd.json`
-3. Listed dependencies in `requirements.txt`
-4. (Optional) Updated the `Dockerfile`
+当你完成以下步骤后：
+1. 在 `agents/` 中实现或更新了你的 Agent
+2. 在 `aicrowd.json` 中指定了你的模型
+3. 在 `requirements.txt` 中列出了依赖
+4. （可选）更新了 `Dockerfile`
 
-Commit and push your changes:
+提交并推送你的更改：
 ```bash
 git add .
-git commit -m "Add my custom agent"
+git commit -m "添加我的自定义 Agent"
 git push origin main
 ```
 
-### 3.2 Tagging a Submission ✨
+### 3.2 标记提交版本 ✨
 
-**Create a Git tag** that starts with `submission-<version>` to trigger a submission:
+**创建以 `submission-<version>` 开头的 Git 标签**来触发提交：
 
 ```bash
 git tag submission-v1.0
 git push origin submission-v1.0
 ```
-This **tagged commit** is used to build and evaluate your model, generating a score on the leaderboard. You can create as many `submission-*` tags as you like (e.g., `submission-v1.1`, `submission-v2.0`, etc.).
+这个**带标签的提交**将用于构建和评估你的模型，并在排行榜上生成分数。你可以创建任意多个 `submission-*` 标签（如 `submission-v1.1`、`submission-v2.0` 等）。
 
 ---
 
-## 4. Hardware & Evaluation Environment
+## 4. 硬件与评估环境
 
-1. **Hardware**: Your code will run on an **NVIDIA L40s GPU** with 4 vCPUs, **32GB RAM**, and **48GB of GPU Memory** and no internet access (`HF_HUB_OFFLINE=1`).
-2. **Initialization Time**: You have **10 minutes** to download models and set up your environment.
-3. **Response Time**: Each call to your agent’s `batch_generate_response()` must finish within **10 seconds x agent.get_batch_size()** .
-4. **No Internet**: Any code that tries to reach out to external URLs will fail. Ensure your model and all dependencies are accessible offline via `hf_models` or your Docker image.
+1. **硬件**：你的代码将在 **NVIDIA L40s GPU** 上运行，配备 4 vCPU、**32GB RAM**、**48GB 显存**，无互联网（`HF_HUB_OFFLINE=1`）
+2. **初始化时间**：有 **10 分钟**下载模型和设置环境
+3. **回答时间**：每次调用 Agent 的 `batch_generate_response()` 必须在 **10 秒 × agent.get_batch_size()** 内完成
+4. **无网络**：任何试图访问外部 URL 的代码都将失败。确保你的模型和所有依赖通过 `hf_models` 或 Docker 镜像在离线状态下可用
 
 ---
 
-## 5. Tips & Examples
+## 5. 提示与示例
 
-### 5.1 Example aicrowd.json
+### 5.1 aicrowd.json 示例
+
 ```json
 {
     "challenge_id": "multi-source-augmentation",
@@ -148,17 +149,17 @@ This **tagged commit** is used to build and evaluate your model, generating a sc
         {
             "repo_id": "your-org/your-model",
             "revision": "your-custom-revision",
-            "ignore_patterns": "*.md",            
-        },
-        ...
+            "ignore_patterns": "*.md"
+        }
     ]
 }
 ```
-- Submits to the **multi-source-augmentation** track
-- Requests GPU resources
-- Two HF models: the Llama 3.2 11B vision instruct model + your custom vision model
+- 提交到 **multi-source-augmentation** 赛道
+- 申请 GPU 资源
+- 两个 HF 模型：Llama 3.2 11B Vision Instruct + 你的自定义视觉模型
 
-### 5.2 Example requirements.txt
+### 5.2 requirements.txt 示例
+
 ```
 torch>=2.0.0
 transformers>=4.36.0
@@ -167,7 +168,8 @@ numpy>=1.24.0
 some-retrieval-lib>=0.1.3
 ```
 
-### 5.3 Example Dockerfile
+### 5.3 Dockerfile 示例
+
 ```dockerfile
 FROM python:3.10-slim-bookworm
 
@@ -177,45 +179,43 @@ RUN pip install --progress-bar off --no-cache-dir -r /tmp/requirements.txt
 
 WORKDIR /home/aicrowd
 COPY . .
-
 ```
 
 ---
 
-## 6. Choosing a Track
+## 6. 选择赛道
 
-In `aicrowd.json`, set `"challenge_id"` to one of:
+在 `aicrowd.json` 中，将 `"challenge_id"` 设为以下之一：
 
-1. **`"single-source-augmentation"`**
-2. **`"multi-source-augmentation"`**
-3. **`"multi-turn-qa"`**
+1. **`"single-source-augmentation"`** — Task 1: 单源增强
+2. **`"multi-source-augmentation"`** — Task 2: 多源增强
+3. **`"multi-turn-qa"`** — Task 3: 多轮问答
 
-Whichever ID you choose determines **which task** your submission competes in. 🏆
-
----
-
-## 7. Next Steps
-
-- Write or refine your agent code in `agents/`
-- Update `aicrowd.json` with the correct `challenge_id` and `hf_models`
-- Tag your submission with `submission-<version>` and push it.
-```
-git commit -am 'Your message'
-git tag -am 'submission-<A_GREAT_NAME>' submission-<A_GREAT_NAME>
-git push origin submission-<A_GREAT_NAME>
-```
-- 🎉 Watch your scoreboard results on the challenge page!
-
-## 8. Troubleshooting & Best Practices
-
-1. **Model Access**: Confirm that the **`aicrowd`** Hugging Face account has permission to pull your private models.
-2. **Local Testing**: Use `python local_evaluation.py` to confirm basic correctness before tagging a submission.
-3. **Performance Optimization**: For large models, consider quantization or other speed-ups to meet runtime constraints.
-4. **Multiple Submissions**: Tag different versions (e.g. `submission-v1.0`, `submission-v1.1`) for multiple attempts.
-
-> **Pro Tip**: Keep an eye on your Docker build logs to ensure it doesn't exceed time or memory limits.
+选择的 ID 决定了你的提交将参加**哪个任务**的比赛。🏆
 
 ---
 
+## 7. 下一步
 
-**We can’t wait to see your creative solutions!** 🤖🌟 Happy hacking!
+- 在 `agents/` 中编写或完善你的 Agent 代码
+- 用正确的 `challenge_id` 和 `hf_models` 更新 `aicrowd.json`
+- 用 `submission-<version>` 标签你的提交并推送：
+  ```bash
+  git commit -am '你的提交信息'
+  git tag -am 'submission-<名称>' submission-<名称>
+  git push origin submission-<名称>
+  ```
+- 🎉 在比赛页面上查看你的排行榜结果！
+
+## 8. 故障排除与最佳实践
+
+1. **模型访问**：确认 **`aicrowd`** Hugging Face 账号有权拉取你的私有模型
+2. **本地测试**：在打标签提交前使用 `python local_evaluation.py` 验证基本功能
+3. **性能优化**：对于大模型，考虑量化或其他加速方法以满足运行时间限制
+4. **多次提交**：为不同版本打标签（如 `submission-v1.0`、`submission-v1.1`）进行多次尝试
+
+> **提示**：关注你的 Docker 构建日志，确保不会超过时间或内存限制。
+
+---
+
+**期待看到你的创意方案！** 🤖🌟 祝编码愉快！
