@@ -19,7 +19,7 @@ from PIL import Image
 from datasets import Dataset, load_dataset
 from loguru import logger
 
-from utils import download_image_url
+from shared.utils import download_image_url
 
 
 SESSIONS_TO_SKIP = ["04d98259-27af-41b1-a7be-5798fd1b8e95", "695b4b5c-7c65-4f7b-8968-50fe10482a16"]

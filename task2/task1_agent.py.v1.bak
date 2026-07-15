@@ -26,6 +26,43 @@ from PIL import Image
 from agents.base_agent import BaseAgent
 from cragmm_search.search import UnifiedSearchPipeline
 
+
+# ============================================================
+# 文本清洗工具
+# ============================================================
+
+def clean_attr_value(text: str) -> str:
+    """清洗 KG 属性值中的 Wiki 标记等噪声。"""
+    # 去除 Wiki 标记
+    text = re.sub(r'\{\{[^}]*\}\}', '', text)      # {{coord|...}}, {{convert|...}}
+    text = re.sub(r'\[\[([^\]|]+?)\]\]', r'\1', text)  # [[Dallara DW12]] → Dallara DW12
+    text = re.sub(r'\[\[[^\]]+\|([^\]]+)\]\]', r'\1', text)  # [[link|text]] → text
+    # 去除 HTML/Wiki 格式标记
+    text = re.sub(r"'''?([^']+)'''?", r'\1', text)  # '''bold'''
+    text = re.sub(r'<br\s*/?>', ', ', text)         # <br /> → ", "
+    text = re.sub(r'<[^>]+>', '', text)             # 其他 HTML 标签
+    text = re.sub(r'&[a-z]+;', ' ', text)           # HTML entities
+    # 压缩多余空白
+    text = re.sub(r'\s+', ' ', text).strip()
+    # 截断过长值
+    if len(text) > 200:
+        text = text[:200] + "..."
+    return text
+
+
+def is_noisy_attribute(key: str, value: str) -> bool:
+    """判断属性值是否纯噪声（应被跳过）。"""
+    # 包含残留的 wiki 标记
+    if re.search(r'[\{\}\[\]<>|]', value):
+        return True
+    # 纯坐标、URL 等无用信息
+    if key.lower() in ("logo", "image", "track_map", "coordinates", "website", "image_caption"):
+        return True
+    # 值太短
+    if len(value.strip()) < 2:
+        return True
+    return False
+
 # ============================================================
 # 可调参数 — 在这里调整你的 Agent 行为
 # ============================================================
@@ -48,9 +85,14 @@ MAX_GENERATION_TOKENS = 128
 # 批处理大小 (Mac 上建议小一些)
 BATCH_SIZE = 4
 
-# MLX VLM 模型 (4-bit 量化，适合 18GB 内存)
-# 备选: "mlx-community/Llama-3.2-Vision-Instruct-4bit" (需要更多内存)
-VLM_MODEL_NAME = "mlx-community/Qwen2-VL-2B-Instruct-4bit"
+# MLX VLM 模型 (4-bit 量化)
+# 按硬件选择：
+#   M1/M2/M3 16GB → Qwen2-VL-2B (~2GB, 最快)
+#   M2/M3 Pro 18GB+ → Qwen2-VL-7B (~5GB, 推荐，首次需下载)
+#   M3 Max 32GB+ → Qwen2-VL-7B 或 Llama-3.2-11B-Vision (~8GB)
+# VLM_MODEL_NAME = "mlx-community/Qwen2-VL-2B-Instruct-4bit"
+VLM_MODEL_NAME = "mlx-community/Qwen2-VL-7B-Instruct-4bit"  # 7B，推荐 M3 Pro 18GB+
+# VLM_MODEL_NAME = "mlx-community/Llama-3.2-Vision-Instruct-4bit"  # 需要 32GB+
 
 # 生成温度 (0 = 确定性最高)
 TEMPERATURE = 0.0
@@ -237,7 +279,7 @@ class Task1SingleSourceAgent(BaseAgent):
             return [], 1.0
 
     # ============================================================
-    # Step 2: 改进的 KG 文本提取
+    # Step 2: KG 文本提取（优化版 — 清晰属性列表格式）
     # ============================================================
 
     def _extract_kg_text(
@@ -246,12 +288,7 @@ class Task1SingleSourceAgent(BaseAgent):
         query: str = "",
     ) -> Tuple[str, int, float]:
         """
-        Step 2: 从 KG 检索结果中提取有用的文本信息
-
-        改进：
-        - 基于相似度分数的加权提取
-        - 查询感知的字段优先级
-        - 更好的去重和截断
+        从 KG 检索结果中提取结构化信息，以 "实体名 + 属性列表" 清晰格式输出。
 
         Returns:
             (context_text, num_valid_entities, avg_score)
@@ -259,7 +296,10 @@ class Task1SingleSourceAgent(BaseAgent):
         if not kg_results:
             return "", 0, 1.0
 
-        all_contexts = []
+        query_lower = query.lower()
+        query_words = set(query_lower.split())
+
+        all_blocks = []
         total_score = 0.0
         num_valid = 0
 
@@ -276,82 +316,112 @@ class Task1SingleSourceAgent(BaseAgent):
                 if not attrs:
                     continue
 
-                # 查询感知的字段优先级
-                # 如果问题中有特定关键词，调整优先级
-                query_lower = query.lower()
-                if any(kw in query_lower for kw in ["price", "cost", "how much"]):
-                    priority_fields = [
-                        "price", "cost", "description", "caption", "summary",
-                        "msrp", "list_price", "retail_price"
-                    ]
-                elif any(kw in query_lower for kw in ["where", "location", "country"]):
-                    priority_fields = [
-                        "location", "country", "country_of_origin", "assembly_locations",
-                        "description", "caption", "summary"
-                    ]
-                elif any(kw in query_lower for kw in ["when", "year", "date", "release"]):
-                    priority_fields = [
-                        "production_years", "production_start", "production_start_year",
-                        "release_date", "year", "model_year", "description", "caption", "summary"
-                    ]
-                else:
-                    # 默认优先级：包含 KG 中常见的字段名
-                    priority_fields = [
-                        "description", "caption", "summary",
-                        "name", "manufacturer", "brand", "model",
-                        "body_style", "body_type", "class", "type",
-                        "engine_type", "engine", "transmission", "drive_type",
-                        "country_of_origin", "location", "production_years",
-                    ]
-
-                entity_texts = []
-
-                # 提取优先字段
-                for field in priority_fields:
-                    if field in attrs and attrs[field]:
-                        text = str(attrs[field]).strip()
-                        if text and len(text) > 3:
-                            entity_texts.append(text)
-
-                # 提取其他属性
+                # 过滤出有意义且不重复的属性，按与问题的相关性排序
+                attr_items = []
                 for key, value in attrs.items():
-                    if key not in priority_fields and key not in ("image_url", "url") and value:
-                        text = str(value).strip()
-                        if text and len(text) > 1:
-                            entity_texts.append(f"{key}: {text}")
+                    text = str(value).strip()
+                    # 清洗噪声 + 跳过无意义属性
+                    text = clean_attr_value(text)
+                    if is_noisy_attribute(key, text):
+                        continue
+                    # 计算属性名与问题的相关性（简单的词重叠）
+                    key_words = set(key.lower().replace("_", " ").split())
+                    relevance = len(key_words & query_words)
+                    attr_items.append((relevance, key, text))
 
-                if entity_texts:
-                    # 合并该实体的所有文本
-                    combined = " | ".join(entity_texts)
-                    # 如果有实体名，加上前缀
-                    if entity_name:
-                        combined = f"[{entity_name}] {combined}"
-                    all_contexts.append(combined)
-                    total_score += 1.0 - score  # 转换为相似度（越高越好）
-                    num_valid += 1
+                if not attr_items:
+                    continue
 
-        if not all_contexts:
+                # 相关的属性排在前面，最多保留 8 个
+                attr_items.sort(key=lambda x: (-x[0], x[1]))
+                attr_items = attr_items[:8]
+
+                # 构建该实体的文本块
+                lines = [f"Entity: {entity_name}"]
+                for _, key, text in attr_items:
+                    lines.append(f"  {key}: {text}")
+                all_blocks.append("\n".join(lines))
+                total_score += 1.0 - score
+                num_valid += 1
+
+        if not all_blocks:
             return "", 0, 1.0
 
-        # 去重（保留首次出现的顺序）
+        # 去重 + 限制数量
         seen = set()
-        unique_contexts = []
-        for ctx in all_contexts:
-            if ctx not in seen:
-                seen.add(ctx)
-                unique_contexts.append(ctx)
+        unique_blocks = []
+        for block in all_blocks:
+            if block not in seen:
+                seen.add(block)
+                unique_blocks.append(block)
 
-        # 限制上下文长度 — 小模型需要更简洁的上下文
-        max_contexts = 5
-        context = "\n".join(
-            f"- {ctx}" for ctx in unique_contexts[:max_contexts]
-        )
-
+        context = "\n\n".join(unique_blocks[:3])  # 最多 3 个实体
         avg_score = total_score / num_valid if num_valid > 0 else 0.0
         return context, num_valid, avg_score
 
     # ============================================================
-    # Step 3: 分层 Prompt 构建
+    # Step 2.5: 直接从 KG 提取候选答案（Rule-based 快速通道）
+    # ============================================================
+
+    # 问题关键词 → KG 属性名的映射表
+    QUERY_TO_KG_FIELD_MAP = {
+        "price": ["price", "msrp", "list_price", "retail_price", "cost"],
+        "cost": ["price", "msrp", "list_price", "retail_price", "cost"],
+        "how much": ["price", "msrp", "list_price", "retail_price", "cost"],
+        "seat": ["number_of_seats", "seating_capacity", "passenger_capacity", "capacity"],
+        "passenger": ["number_of_seats", "seating_capacity", "passenger_capacity"],
+        "brand": ["brand", "manufacturer", "name"],
+        "manufacturer": ["manufacturer", "brand", "name"],
+        "who made": ["manufacturer", "brand", "author", "artist", "publisher"],
+        "year": ["production_years", "production_start_year", "release_date", "model_year", "year"],
+        "when": ["production_start", "release_date", "opened", "constructed", "built"],
+        "release": ["release_date", "production_start_year", "model_year"],
+        "construction": ["constructed", "built", "broke_ground", "opened"],
+        "where": ["location", "country", "country_of_origin", "assembly_locations", "address"],
+        "location": ["location", "country", "address"],
+        "country": ["country", "country_of_origin", "location"],
+        "color": ["color", "colour"],
+        "model": ["model", "name", "body_style", "body_type", "class"],
+        "engine": ["engine_type", "engine", "engine_displacement", "drive_type"],
+        "length": ["length", "width", "height", "wheelbase"],
+        "weight": ["curb_weight", "weight", "mass"],
+        "fuel": ["fuel_capacity", "fuel_economy", "mpg", "fuel_type"],
+    }
+
+    def _extract_candidate_from_kg(
+        self, query: str, kg_results: List[Dict]
+    ) -> Optional[str]:
+        """尝试直接从 KG 属性中提取与问题匹配的值。"""
+        query_lower = query.lower()
+        target_fields = set()
+        for keyword, fields in self.QUERY_TO_KG_FIELD_MAP.items():
+            if keyword in query_lower:
+                target_fields.update(fields)
+        if not target_fields:
+            return None
+
+        candidates = []
+        for result in kg_results:
+            result_score = result.get("score", 1.0)
+            for entity in result.get("entities", []):
+                attrs = entity.get("entity_attributes") or {}
+                for key, value in attrs.items():
+                    key_lower = key.lower()
+                    for target in target_fields:
+                        if target in key_lower:
+                            text = clean_attr_value(str(value))
+                            if text and len(text) >= 2:
+                                match_score = (1.0 - result_score) * (1.5 if target == key_lower else 1.0)
+                                candidates.append((match_score, text, key))
+
+        if not candidates:
+            return None
+        candidates.sort(key=lambda x: -x[0])
+        best_score, best_value, _ = candidates[0]
+        return best_value if best_score > 0.25 else None
+
+    # ============================================================
+    # Step 3: 分层 Prompt 构建（含 Few-shot 示例）
     # ============================================================
 
     def _build_answer_prompt(
@@ -360,52 +430,39 @@ class Task1SingleSourceAgent(BaseAgent):
         kg_context: str,
         query_type_info: Dict[str, Any],
         retrieval_quality: Dict[str, Any],
-    ) -> str:
+    ) -> List[Dict]:
         """
-        Step 3: 构建分层回答 Prompt
-
-        改进：
-        - 根据查询类型调整系统指令
-        - 根据检索质量调整不确定性表达
-        - 更精确的规则约束
+        构建 Prompt，包含 Few-shot 示例以指导 2B 模型行为。
         """
-        query_type = query_type_info["query_type"]
-        has_good_kg = retrieval_quality.get("has_good_match", False)
 
-        # 基础系统指令 — 为 2B 小模型精简
+        # ——— System Prompt（精简指令 + Few-shot 示例）———
         system_instruction = (
-            "You answer questions concisely using image and knowledge graph data. "
-            "Rules:\n"
-            "1. Answer in 1 short sentence or a single phrase.\n"
-            '2. Only use facts from the image or KG data. Never guess.\n'
-            '3. If not confident, say EXACTLY: "I don\'t know"\n'
+            "Answer questions using the image and Knowledge Graph (KG) data. "
+            "Answer in ONE short phrase or sentence. Never make up facts.\n"
+            "\n"
+            "Examples:\n"
+            "KG: Entity: Organic Valley Milk\n  brand: Organic Valley\nQ: what brand is this milk?\nA: Organic Valley\n\n"
+            "KG: Entity: Toyota Camry\n  number_of_seats: 5\nQ: how many seats does this car have?\nA: 5\n\n"
+            "KG: (no data)\nQ: what color is the flower?\nA: purple\n\n"
+            "KG: Entity: Eiffel Tower\n  construction_started: 1887\nQ: when was this built?\nA: 1887\n\n"
+            "KG: Entity: Unknown Item\n  weight: 2kg\nQ: what is the price?\nA: I don't know\n"
+            "\n"
+            "Key rules:\n"
+            "- Extract the EXACT value from KG if it answers the question.\n"
+            "- If KG has related info but NOT the answer, check the image.\n"
+            '- If neither image nor KG can answer, say "I don\'t know".\n'
+            "- Never output raw KG data. Always give a natural answer."
         )
 
-        # 根据查询类型添加简短指导
-        type_specific_guidance = {
-            "visual": " Look at the image carefully.",
-            "knowledge": " Check the KG data for the answer.",
-            "reasoning": " Combine visual clues with KG data.",
-            "comparison": " Compare based on available data.",
-        }
-
-        guidance = type_specific_guidance.get(query_type, "")
-        system_instruction += guidance
-
-        # 构建用户消息 — 精简格式
+        # ——— User Message ———
         if kg_context:
             user_message = (
-                f"Knowledge Graph data:\n{kg_context}\n\n"
-                f"Question: {query}\n"
-                f"Answer:"
+                f"KG data:\n{kg_context}\n\n"
+                f"Question: {query}"
             )
         else:
-            user_message = (
-                f"Question: {query}\n"
-                f"Answer:"
-            )
+            user_message = f"Question: {query}"
 
-        # 构建完整 messages 格式
         messages = [
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": user_message},
@@ -586,7 +643,10 @@ class Task1SingleSourceAgent(BaseAgent):
                 image, query_type_info
             )
 
-            # ---- Step 3: 提取 KG 文本 ----
+            # ---- Step 3: 尝试规则快速提取（绕过 VLM 推理） ----
+            candidate = self._extract_candidate_from_kg(query, kg_results)
+
+            # ---- Step 4: 提取 KG 文本 ----
             kg_context, num_entities, avg_score = self._extract_kg_text(
                 kg_results, query
             )
@@ -605,21 +665,26 @@ class Task1SingleSourceAgent(BaseAgent):
                 "num_results": len(kg_results),
             }
 
-            # ---- Step 4: 分层 Prompt ----
+            # ---- Step 5: 分层 Prompt + VLM 生成 ----
             messages = self._build_answer_prompt(
                 query, kg_context, query_type_info, retrieval_quality
             )
 
-            # ---- Step 5: VLM 生成 ----
             raw_answer = self._generate_single_answer(query, image, messages)
-
-            # ---- Step 6: 答案后处理 ----
             cleaned_answer = self._post_process_answer(raw_answer)
 
-            # ---- Step 7: 置信度评估 ----
+            # ---- Step 6: 置信度评估 ----
             final_answer, was_overridden = self._assess_confidence(
                 cleaned_answer, retrieval_quality, query_type_info
             )
+
+            # ---- Step 7: 规则提取答案优先（如果 VLM 没给出好答案） ----
+            if candidate and not was_overridden:
+                vlm_is_idk = final_answer.strip().lower() == "i don't know"
+                vlm_is_junk = len(final_answer) < 3 or final_answer.count(",") > 4
+                if vlm_is_idk or vlm_is_junk:
+                    final_answer = candidate
+                    was_overridden = False  # 规则答案不算覆盖
 
             responses.append(final_answer)
 

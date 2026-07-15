@@ -113,4 +113,5 @@ local_debug.py
 unsloth*/
 EgoTextVQA/
 w11wo/
-Llama*/
+Llama*/.~*
+__pycache__/

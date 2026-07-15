@@ -3,7 +3,7 @@ import string
 from typing import Dict, List, Any
 from PIL import Image
 
-from agents.base_agent import BaseAgent
+from shared.base_agent import BaseAgent
 from cragmm_search.search import UnifiedSearchPipeline
 
 class RandomAgent(BaseAgent):

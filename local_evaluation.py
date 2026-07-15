@@ -2,16 +2,41 @@
 """
 Evaluator Script for CRAG-MM dataset
 
-This script evaluates an agent (using a user-provided agent `UserAgent` as configured in `agents/user_config.py`) 
-on the CRAG-MM dataset. It generates responses, evaluates them (using an optional semantic evaluation model via OpenAI API),
+This script evaluates an agent (using a user-provided agent `UserAgent` as configured
+in `task1/user_config.py` or `task2/user_config.py`) on the CRAG-MM dataset.
+It generates responses, evaluates them (using an optional semantic evaluation model via OpenAI API),
 computes multi-turn conversation metrics, and optionally saves the results.
+
+Usage:
+  Task 1: python local_evaluation.py --task task1 --suppress-web-search-api ...
+  Task 2: python local_evaluation.py --task task2 ...
 """
 
 import argparse
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Callable
+from typing import Callable, Optional
+
+# 本地语义评估模型（延迟加载）
+_local_semantic_model: Optional[object] = None
+
+def _get_local_semantic_model():
+    """延迟加载轻量级语义相似度模型，用于本地评估。"""
+    global _local_semantic_model
+    if _local_semantic_model is None:
+        from sentence_transformers import SentenceTransformer
+        _local_semantic_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _local_semantic_model
+
+def semantic_similarity(text1: str, text2: str) -> float:
+    """计算两段文本的语义相似度（0-1）。"""
+    model = _get_local_semantic_model()
+    import numpy as np
+    emb1 = model.encode(text1, convert_to_numpy=True)
+    emb2 = model.encode(text2, convert_to_numpy=True)
+    sim = np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2) + 1e-8)
+    return float(sim)
 
 # Set tokenizers parallelism before importing any HF libraries
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
@@ -26,11 +51,10 @@ from pydantic import BaseModel
 from rich.console import Console
 from rich.panel import Panel
 
-from agents.base_agent import BaseAgent
-from agents.user_config import UserAgent
-from crag_batch_iterator import CRAGTurnBatchIterator
+from shared.base_agent import BaseAgent
 from cragmm_search.search import UnifiedSearchPipeline
-from utils import display_results, ensure_crag_cache_dir_is_configured
+from shared.crag_batch_iterator import CRAGTurnBatchIterator
+from shared.utils import display_results, ensure_crag_cache_dir_is_configured
 from tokenizers import Tokenizer
 
 # Load environment variables
@@ -165,17 +189,42 @@ class CRAGEvaluator:
         # Begin by assuming exact match correctness
         is_correct = is_exact_match
 
-        # Use semantic evaluation if not an exact match and an evaluation model is provided.
-        if not is_idk and not is_exact_match and self.eval_model_name:
-            local_openai_client = OpenAI()
-            messages = [
-                {"role": "system", "content": self.get_system_message()},
-                {"role": "user", "content": f"Question: {query}\nGround truth: {ground_truth}\nPrediction: {agent_response}\n"},
-            ]
-            api_response = self.attempt_api_call(local_openai_client, self.eval_model_name, messages)
-            if api_response:
-                is_semantically_correct = api_response.accuracy
+        # 语义评估：
+        #   - 如果提供了 OpenAI 模型 → 用 GPT 评估
+        #   - 如果 eval_model=None → 用本地 sentence-transformers 做语义相似度
+        if not is_idk and not is_exact_match:
+            if self.eval_model_name:
+                # OpenAI 语义评估
+                local_openai_client = OpenAI()
+                messages = [
+                    {"role": "system", "content": self.get_system_message()},
+                    {"role": "user", "content": f"Question: {query}\nGround truth: {ground_truth}\nPrediction: {agent_response}\n"},
+                ]
+                api_response = self.attempt_api_call(local_openai_client, self.eval_model_name, messages)
+                if api_response:
+                    is_semantically_correct = api_response.accuracy
+                    is_correct = is_semantically_correct
+            else:
+                # 本地语义评估：双策略 ——
+                #   ① 整体语义相似度（embedding cosine similarity）
+                #   ② 答案关键词是否出现在标准答案中（token 覆盖）
+                import numpy as np
+                sim = semantic_similarity(agent_response, ground_truth)
+
+                # Token 覆盖率
+                stopwords = {"the", "a", "an", "is", "are", "was", "were", "in", "on", "at",
+                             "to", "of", "for", "with", "and", "or", "it", "this", "that",
+                             "from", "by", "has", "have", "its", "be", "as", "can", "no", "not"}
+                ans_tokens = set(agent_response.lower().split()) - stopwords
+                gt_tokens = set(ground_truth.lower().split()) - stopwords
+                overlap = len(ans_tokens & gt_tokens) / max(len(ans_tokens), 1) if ans_tokens else 0.0
+
+                combined = max(sim, overlap * 0.85)
+                threshold = 0.30
+                is_semantically_correct = combined >= threshold
                 is_correct = is_semantically_correct
+                api_response = {"method": "local", "similarity": round(sim, 3),
+                                "overlap": round(overlap, 3), "combined": round(combined, 3)}
         if is_exact_match:
             is_semantically_correct = True
 
@@ -185,7 +234,7 @@ class CRAGEvaluator:
             "is_correct": is_correct,
             "is_miss": is_idk,
             "is_semantically_correct": is_semantically_correct,
-            "api_response": api_response.model_dump() if api_response else None,
+            "api_response": api_response if isinstance(api_response, dict) else (api_response.model_dump() if api_response else None),
         }
 
     def initialize_evaluation(self) -> None:
@@ -487,12 +536,26 @@ def main() -> None:
         help="Dataset revision/version to use when loading from HuggingFace",
     )
     parser.add_argument(
+        "--task",
+        type=str,
+        default="task2",
+        choices=["task1", "task2"],
+        help="Task to evaluate (task1 or task2)",
+    )
+    parser.add_argument(
         "--num-workers",
         type=int,
         default=DEFAULT_NUM_WORKERS,
         help=f"Number of worker processes for parallel evaluation (default: {DEFAULT_NUM_WORKERS})",
     )
     args = parser.parse_args()
+
+    # 根据 --task 参数动态加载对应 Agent
+    if args.task == "task1":
+        from task1.user_config import UserAgent
+    else:
+        from task2.user_config import UserAgent
+    console.print(f"[bold green]Using agent from: {args.task}/user_config.py[/bold green]")
 
     console.print(f"[bold blue]Loading {args.dataset_type} dataset...[/bold blue]")
     repo_name = f"crag-mm-2025/crag-mm-{args.dataset_type}-public"

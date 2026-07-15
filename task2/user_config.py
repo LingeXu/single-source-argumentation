@@ -5,31 +5,37 @@
 # 未使用的 Agent 导入被 try/except 包裹，避免缺失依赖时报错。
 
 # --- Random Agent (无依赖) ---
-from agents.random_agent import RandomAgent
+from task2.random_agent import RandomAgent
 
 # --- Simple RAG Agent (需要 vllm + CUDA GPU) ---
 try:
-    from agents.rag_agent import SimpleRAGAgent
+    from task2.rag_agent import SimpleRAGAgent
 except ImportError:
     SimpleRAGAgent = None
 
 # --- Llama Vision Model (需要 vllm + CUDA GPU) ---
 try:
-    from agents.vanilla_llama_vision_agent import LlamaVisionModel
+    from task2.vanilla_llama_vision_agent import LlamaVisionModel
 except ImportError:
     LlamaVisionModel = None
 
 # --- MLLM RAG Agent (需要 vllm + CUDA GPU, 比赛获奖方案) ---
 try:
-    from agents.mllm_rag_agent import MLLMRAGAgent
+    from task2.mllm_rag_agent import MLLMRAGAgent
 except ImportError:
     MLLMRAGAgent = None
 
 # --- Task 1 Agent (MLX 版, Apple Silicon / Mac 专用) ---
 try:
-    from agents.task1_agent import Task1SingleSourceAgent
+    from task1.task1_agent import Task1SingleSourceAgent
 except ImportError:
     Task1SingleSourceAgent = None
+
+# --- Task 2 Agent (MLX 版, 多源增强, Apple Silicon / Mac 专用) ---
+try:
+    from task2.task2_agent import Task2MultiSourceAgent
+except ImportError:
+    Task2MultiSourceAgent = None
 
 # ============================================================
 # 🎯 在此选择使用的 Agent
@@ -38,4 +44,5 @@ except ImportError:
 # UserAgent = SimpleRAGAgent
 # UserAgent = LlamaVisionModel
 # UserAgent = MLLMRAGAgent
-UserAgent = Task1SingleSourceAgent
+# UserAgent = Task1SingleSourceAgent
+UserAgent = Task2MultiSourceAgent

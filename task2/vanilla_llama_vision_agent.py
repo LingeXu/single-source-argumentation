@@ -4,7 +4,7 @@ import os
 import torch
 from PIL import Image
 from transformers import MllamaForConditionalGeneration, AutoProcessor
-from agents.base_agent import BaseAgent
+from shared.base_agent import BaseAgent
 from cragmm_search.search import UnifiedSearchPipeline
 
 import vllm

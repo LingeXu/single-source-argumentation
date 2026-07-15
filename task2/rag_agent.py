@@ -3,10 +3,10 @@ import os
 
 import torch
 from PIL import Image
-from agents.base_agent import BaseAgent
+from shared.base_agent import BaseAgent
 from cragmm_search.search import UnifiedSearchPipeline
 
-from crag_web_result_fetcher import WebSearchResult
+from shared.crag_web_result_fetcher import WebSearchResult
 import vllm
 
 # Configuration constants
