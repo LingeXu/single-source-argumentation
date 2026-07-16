@@ -37,7 +37,6 @@ venv.bak/
 .DS_Store
 
 # Project specific
-shared/
 *.json
 !aicrowd.json
 *.log

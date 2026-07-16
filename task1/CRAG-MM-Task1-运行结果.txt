@@ -1,0 +1,532 @@
+Caching downloaded images in /Users/xulingexu/.cache/cragmm_images_cache
+You can override this by setting the CRAG_CACHE_DIR environment variable.
+Loading single-turn dataset...
+Loading from HuggingFace: crag-mm-2025/crag-mm-single-turn-public (revision: 
+v0.1.2)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Using split: 'validation' with 1938 examples
+╭─────────────────────── ATTENTION ────────────────────────╮
+│                                                          │
+│                                                          │
+│     WARNING: SEMANTIC EVALUATION IS DISABLED             │
+│                                                          │
+│     No calls to LLM-as-a-Judge will be made!             │
+│     Results will rely only on exact string matching.     │
+│                                                          │
+│                                                          │
+╰──────────────────────────────────────────────────────────╯
+Using device: mps
+Loading weights:   0%|          | 0/590 [00:00<?, ?it/s]Loading weights: 100%|██████████| 590/590 [00:00<00:00, 44514.31it/s]
+Loading image index from huggingface crag-mm-2025/image-search-index-validation
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 16087.74it/s]
+[Task1 Agent] 正在加载 VLM 模型: mlx-community/Qwen2-VL-2B-Instruct-4bit ...
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 11802.85it/s]
+[Task1 Agent] ✅ 模型加载完成: mlx-community/Qwen2-VL-2B-Instruct-4bit
+Starting evaluation with 8 workers
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=know | KG=5条/4实体 | score=0.596 | Q: is this a good car for transporting seven pas... | A: I don't know... | ⏱ 1.6s
+  [2/4] ✅ type=know | KG=5条/5实体 | score=0.618 | Q: can the 2023 model with a 1.3l awd engine of ... | A: minivan... | ⏱ 0.7s
+  [3/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: what is the origin of this food item?... | A: I don't know... | ⏱ 0.6s
+  [4/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: what is the range of wavelength required to s... | A: I don't know... | ⏱ 0.6s
+[Task1 Agent] ===== 完成！总耗时 3.5s, 平均 0.9s/条, IDK率: 75.0% (3/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: was this showcased at the british internation... | A: I don't know... | ⏱ 0.6s
+  [2/4] ✅ type=know | KG=5条/4实体 | score=0.631 | Q: how many passengers can the red car seat?... | A: I don't know... | ⏱ 0.8s
+  [3/4] ✅ type=know | KG=5条/5实体 | score=0.543 | Q: how long did this take to build?... | A: 2006... | ⏱ 0.9s
+  [4/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: what are some common attachments for clearing... | A: I don't know... | ⏱ 0.6s
+[Task1 Agent] ===== 完成！总耗时 2.8s, 平均 0.7s/条, IDK率: 75.0% (3/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=reas | KG=5条/4实体 | score=0.580 | Q: would wearing this constantly at a 90 decibel... | A: I don't know... | ⏱ 0.7s
+  [2/4] ⚠️ type=reas | KG=0条/0实体 | score=1.000 | Q: can i purchase an american assembled vehicle ... | A: I don't know... | ⏱ 0.6s
+  [3/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: what are the two times the building underwent... | A: I don't know... | ⏱ 0.6s
+  [Confidence] 知识型问题无KG匹配 → I don't know
+  [4/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: is the skin of the red scaly fruit edible?... | A: I don't know... [OVERRIDE→IDK] | ⏱ 0.6s
+[Task1 Agent] ===== 完成！总耗时 2.4s, 平均 0.6s/条, IDK率: 100.0% (4/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=know | KG=2条/2实体 | score=0.646 | Q: was this car around before the jaguar xk-e?... | A: No... | ⏱ 0.6s
+  [2/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: is it dangerous living next to these towers?... | A: I don't know... | ⏱ 0.6s
+  [3/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: which generation of this dark blue car across... | A: I don't know... | ⏱ 0.6s
+  [4/4] ✅ type=know | KG=5条/5实体 | score=0.629 | Q: was picasso alive when the painting in the to... | A: I don't know... | ⏱ 0.8s
+[Task1 Agent] ===== 完成！总耗时 2.6s, 平均 0.7s/条, IDK率: 75.0% (3/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=know | KG=5条/4实体 | score=0.559 | Q: which species of the flower on the package ar... | A: I don't know... | ⏱ 0.8s
+  [2/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: how can you tell if this has gone bad?... | A: I don't know... | ⏱ 0.6s
+  [3/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: is this cat more likely to be a male or femal... | A: I don't know... | ⏱ 0.6s
+  [4/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: do these have more protein than chickpeas?... | A: I don't know... | ⏱ 0.6s
+[Task1 Agent] ===== 完成！总耗时 2.5s, 平均 0.6s/条, IDK率: 100.0% (4/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=know | KG=5条/5实体 | score=0.565 | Q: did the japanese police use this during the 1... | A: I don't know... | ⏱ 0.8s
+  [2/4] ✅ type=know | KG=5条/5实体 | score=0.548 | Q: what are the standard sizes of the object wit... | A: 250... | ⏱ 0.8s
+  [3/4] ✅ type=know | KG=3条/3实体 | score=0.643 | Q: what is the towing capacity and torque for th... | A: Ford F-550: towing_capacity: 11,000 lb, torque: 61... | ⏱ 1.2s
+  [4/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: how safe is this for children to use?... | A: I don't know... | ⏱ 0.6s
+[Task1 Agent] ===== 完成！总耗时 3.3s, 平均 0.8s/条, IDK率: 50.0% (2/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: how long will these last?... | A: I don't know... | ⏱ 0.6s
+  [2/4] ✅ type=know | KG=5条/5实体 | score=0.633 | Q: does this have more cargo space than a toyota... | A: No... | ⏱ 0.8s
+  [3/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: where were the generations of the suv next to... | A: I don't know... | ⏱ 0.6s
+  [4/4] ✅ type=comp | KG=5条/5实体 | score=0.613 | Q: when did these first go on sale versus hello ... | A: May 15, 2004... | ⏱ 0.8s
+[Task1 Agent] ===== 完成！总耗时 2.8s, 平均 0.7s/条, IDK率: 50.0% (2/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=know | KG=5条/5实体 | score=0.629 | Q: what multimedia features does this car have?... | A: I don't know... | ⏱ 0.8s
+  [2/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: who is the architect of this building?... | A: I don't know... | ⏱ 0.6s
+  [3/4] ✅ type=know | KG=2条/2实体 | score=0.649 | Q: what are some health benefits of consuming th... | A: I don't know... | ⏱ 0.7s
+  [4/4] ✅ type=know | KG=5条/4实体 | score=0.611 | Q: does this police force have more officers tha... | A: I don't know... | ⏱ 0.9s
+[Task1 Agent] ===== 完成！总耗时 2.9s, 平均 0.7s/条, IDK率: 100.0% (4/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: what is the engine size of the blue vehicle?... | A: I don't know... | ⏱ 0.6s
+  [2/4] ✅ type=know | KG=5条/5实体 | score=0.515 | Q: can the tall tower in the picture withstand a... | A: No... | ⏱ 0.7s
+  [3/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: was this character's first appearance before ... | A: I don't know... | ⏱ 0.6s
+  [4/4] ✅ type=know | KG=1条/1实体 | score=0.647 | Q: where is the manufacturer of this car located... | A: Midtown Manhattan, New York City... | ⏱ 0.7s
+[Task1 Agent] ===== 完成！总耗时 2.5s, 平均 0.6s/条, IDK率: 50.0% (2/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: what sporting events have taken place at this... | A: I don't know... | ⏱ 0.6s
+  [Confidence] 知识型问题无KG匹配 → I don't know
+  [2/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: which generation of this vehicle saw the high... | A: I don't know... [OVERRIDE→IDK] | ⏱ 0.6s
+  [3/4] ✅ type=know | KG=5条/4实体 | score=0.643 | Q: when were these first used?... | A: 1992... | ⏱ 0.8s
+  [4/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: when were these introduced to australia?... | A: I don't know... | ⏱ 0.6s
+[Task1 Agent] ===== 完成！总耗时 2.5s, 平均 0.6s/条, IDK率: 75.0% (3/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=know | KG=5条/5实体 | score=0.598 | Q: is the world's largest of this type of space ... | A: I don't know... | ⏱ 0.8s
+  [2/4] ✅ type=comp | KG=5条/4实体 | score=0.636 | Q: how many of the silver suv were sold in the u... | A: I don't know... | ⏱ 0.9s
+  [3/4] ✅ type=know | KG=5条/5实体 | score=0.619 | Q: how many times has this model changed?... | A: pony car... | ⏱ 0.8s
+  [4/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: when was this logo introduced?... | A: I don't know... | ⏱ 0.6s
+[Task1 Agent] ===== 完成！总耗时 3.0s, 平均 0.7s/条, IDK率: 75.0% (3/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=know | KG=5条/5实体 | score=0.606 | Q: how many grams of sugar is in this per servin... | A: I don't know... | ⏱ 0.8s
+  [2/4] ✅ type=know | KG=5条/4实体 | score=0.599 | Q: what is considered a normal heart rate for ad... | A: 100... | ⏱ 0.7s
+  [3/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: which borough of new york is this in?... | A: I don't know... | ⏱ 0.6s
+  [4/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: when was the artist who made this born?... | A: I don't know... | ⏱ 0.6s
+[Task1 Agent] ===== 完成！总耗时 2.7s, 平均 0.7s/条, IDK率: 75.0% (3/4) =====
+
+
+[Task1 Agent] ===== 处理 4 条查询 =====
+  [1/4] ✅ type=know | KG=5条/5实体 | score=0.603 | Q: where is the animal that the figure is from?... | A: Christmas trees, streets, buildings, private homes... | ⏱ 0.9s
+  [2/4] ✅ type=know | KG=5条/4实体 | score=0.550 | Q: which age and sex had the least amount of inj... | A: Doctors, nurses, medical students... | ⏱ 0.8s
+  [3/4] ⚠️ type=know | KG=0条/0实体 | score=1.000 | Q: who made this painting?... | A: I don't know... | ⏱ 0.6s
+  [4/4] ✅ type=know | KG=5条/4实体 | score=0.510 | Q: where was the first sign accompaning this ere... | A: Richfield... | ⏱ 0.7s
+[Task1 Agent] ===== 完成！总耗时 2.9s, 平均 0.7s/条, IDK率: 25.0% (1/4) =====
+
+Already evaluated 52 conversations. Abruptly stopping evaluation.
+╭───────────────────────── Evaluation Results :: All ──────────────────────────╮
+│                                                                              │
+│  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓                                     │
+│  ┃ Metric                    ┃ Value   ┃                                     │
+│  ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩                                     │
+│  │ Total conversations       │ 52      │                                     │
+│  │ Total turns               │ 52      │                                     │
+│  │ Avg MT conversation score │ -0.29   │                                     │
+│  │ Exact matches             │ 0.0     │                                     │
+│  │ "I don't know" responses  │ 37.0    │                                     │
+│  │ Hallucinated responses    │ 15.0    │                                     │
+│  │ Exact accuracy            │ 0.00%   │                                     │
+│  │ Accuracy                  │ 0.00%   │                                     │
+│  │ Missing rate              │ 71.15%  │                                     │
+│  │ Hallucination rate        │ 28.85%  │                                     │
+│  │ Truthfulness score        │ -0.2885 │                                     │
+│  └───────────────────────────┴─────────┘                                     │
+│                                                                              │
+│  Sample Evaluation Results                                                   │
+│                              Evaluation Results                              │
+│  ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┓  │
+│  ┃           ┃           ┃ Agent     ┃ Ground    ┃ API        ┃ Evaluati… ┃  │
+│  ┃ interact… ┃ Query     ┃ Response  ┃ Truth     ┃ Response   ┃ Result    ┃  │
+│  ┡━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━┩  │
+│  │ 01312     │ who made  │ I don't   │ the       │ None       │ I DON'T   │  │
+│  │           │ this      │ know      │ artist of │            │ KNOW      │  │
+│  │           │ painting? │           │ the       │            │           │  │
+│  │           │           │           │ painting  │            │           │  │
+│  │           │           │           │ untitled  │            │           │  │
+│  │           │           │           │ (paths,   │            │           │  │
+│  │           │           │           │ crossing… │            │           │  │
+│  │           │           │           │ is cy     │            │           │  │
+│  │           │           │           │ gavin.    │            │           │  │
+│  │ 028be     │ where is  │ Midtown   │ honda is  │ None       │ INCORRECT │  │
+│  │           │ the       │ Manhatta… │ headquar… │            │           │  │
+│  │           │ manufact… │ New York  │ in        │            │           │  │
+│  │           │ of this   │ City      │ minato,   │            │           │  │
+│  │           │ car       │           │ tokyo,    │            │           │  │
+│  │           │ located?  │           │ japan.    │            │           │  │
+│  │ 1d049     │ did the   │ I don't   │ no,       │ None       │ I DON'T   │  │
+│  │           │ japanese  │ know      │ because   │            │ KNOW      │  │
+│  │           │ police    │           │ the 1998  │            │           │  │
+│  │           │ use this  │           │ winter    │            │           │  │
+│  │           │ during    │           │ olympics  │            │           │  │
+│  │           │ the 1998  │           │ in nagano │            │           │  │
+│  │           │ winter    │           │ held      │            │           │  │
+│  │           │ olympics  │           │ before    │            │           │  │
+│  │           │ in        │           │ the       │            │           │  │
+│  │           │ nagano?   │           │ nissan    │            │           │  │
+│  │           │           │           │ 370z was  │            │           │  │
+│  │           │           │           │ produced. │            │           │  │
+│  │ 22dfc     │ what are  │ I don't   │ onions    │ None       │ I DON'T   │  │
+│  │           │ some      │ know      │ offer     │            │ KNOW      │  │
+│  │           │ health    │           │ numerous  │            │           │  │
+│  │           │ benefits  │           │ health    │            │           │  │
+│  │           │ of        │           │ benefits, │            │           │  │
+│  │           │ consuming │           │ containi… │            │           │  │
+│  │           │ these?    │           │ chemicals │            │           │  │
+│  │           │           │           │ that      │            │           │  │
+│  │           │           │           │ combat    │            │           │  │
+│  │           │           │           │ cancer    │            │           │  │
+│  │           │           │           │ and       │            │           │  │
+│  │           │           │           │ antibact… │            │           │  │
+│  │           │           │           │ properti… │            │           │  │
+│  │           │           │           │ that kill │            │           │  │
+│  │           │           │           │ a wide    │            │           │  │
+│  │           │           │           │ range of  │            │           │  │
+│  │           │           │           │ bacteria. │            │           │  │
+│  │           │           │           │ they also │            │           │  │
+│  │           │           │           │ aid       │            │           │  │
+│  │           │           │           │ digestio… │            │           │  │
+│  │           │           │           │ support   │            │           │  │
+│  │           │           │           │ bone      │            │           │  │
+│  │           │           │           │ health,   │            │           │  │
+│  │           │           │           │ and may   │            │           │  │
+│  │           │           │           │ help      │            │           │  │
+│  │           │           │           │ lower     │            │           │  │
+│  │           │           │           │ choleste… │            │           │  │
+│  │           │           │           │ levels,   │            │           │  │
+│  │           │           │           │ making    │            │           │  │
+│  │           │           │           │ them a    │            │           │  │
+│  │           │           │           │ valuable  │            │           │  │
+│  │           │           │           │ addition  │            │           │  │
+│  │           │           │           │ to a      │            │           │  │
+│  │           │           │           │ healthy   │            │           │  │
+│  │           │           │           │ diet.     │            │           │  │
+│  │ 26a38     │ what is   │ Ford      │ the 2024  │ None       │ INCORRECT │  │
+│  │           │ the       │ F-550:    │ dodge ram │            │           │  │
+│  │           │ towing    │ towing_c… │ 3500 has  │            │           │  │
+│  │           │ capacity  │ 11,000    │ a towing  │            │           │  │
+│  │           │ and       │ lb,       │ capacity  │            │           │  │
+│  │           │ torque    │ torque:   │ of 37,090 │            │           │  │
+│  │           │ for the   │ 610 lb⋅ft │ pounds    │            │           │  │
+│  │           │ 2024      │           │ and       │            │           │  │
+│  │           │ version   │           │ torque of │            │           │  │
+│  │           │ of this   │           │ 1,075     │            │           │  │
+│  │           │ vehicle   │           │ pound-fe… │            │           │  │
+│  │           │ when it   │           │ when      │            │           │  │
+│  │           │ has a l6  │           │ equipped  │            │           │  │
+│  │           │ engine in │           │ with the  │            │           │  │
+│  │           │ it?       │           │ high-out… │            │           │  │
+│  │           │           │           │ 6.7l      │            │           │  │
+│  │           │           │           │ cummins   │            │           │  │
+│  │           │           │           │ turbo     │            │           │  │
+│  │           │           │           │ diesel i6 │            │           │  │
+│  │           │           │           │ engine.   │            │           │  │
+│  │ 2dfa6     │ which age │ Doctors,  │ males     │ None       │ INCORRECT │  │
+│  │           │ and sex   │ nurses,   │ aged      │            │           │  │
+│  │           │ had the   │ medical   │ 18-24 had │            │           │  │
+│  │           │ least     │ students  │ the       │            │           │  │
+│  │           │ amount of │           │ leaset    │            │           │  │
+│  │           │ injury-r… │           │ amount of │            │           │  │
+│  │           │ unintent… │           │ injury-r… │            │           │  │
+│  │           │ falls     │           │ unintent… │            │           │  │
+│  │           │ reported? │           │ falls     │            │           │  │
+│  │           │           │           │ reported. │            │           │  │
+│  │ 34bfa     │ was this  │ No        │ no, the   │ None       │ INCORRECT │  │
+│  │           │ car       │           │ ford      │            │           │  │
+│  │           │ around    │           │ mustang   │            │           │  │
+│  │           │ before    │           │ began     │            │           │  │
+│  │           │ the       │           │ producti… │            │           │  │
+│  │           │ jaguar    │           │ in 1964,  │            │           │  │
+│  │           │ xk-e?     │           │ while the │            │           │  │
+│  │           │           │           │ jaguar    │            │           │  │
+│  │           │           │           │ xk-e      │            │           │  │
+│  │           │           │           │ began     │            │           │  │
+│  │           │           │           │ producti… │            │           │  │
+│  │           │           │           │ in 1961.  │            │           │  │
+│  │ 39172     │ what      │ I don't   │ a 2015    │ None       │ I DON'T   │  │
+│  │           │ multimed… │ know      │ chevrolet │            │ KNOW      │  │
+│  │           │ features  │           │ suburban  │            │           │  │
+│  │           │ does this │           │ features  │            │           │  │
+│  │           │ car have? │           │ a         │            │           │  │
+│  │           │           │           │ single-s… │            │           │  │
+│  │           │           │           │ cd and    │            │           │  │
+│  │           │           │           │ mp3       │            │           │  │
+│  │           │           │           │ player,   │            │           │  │
+│  │           │           │           │ 6-speaker │            │           │  │
+│  │           │           │           │ system,   │            │           │  │
+│  │           │           │           │ siriusxm  │            │           │  │
+│  │           │           │           │ satellite │            │           │  │
+│  │           │           │           │ radio, hd │            │           │  │
+│  │           │           │           │ radio and │            │           │  │
+│  │           │           │           │ bluetooth │            │           │  │
+│  │           │           │           │ connecti… │            │           │  │
+│  │           │           │           │ for phone │            │           │  │
+│  │           │           │           │ use.      │            │           │  │
+│  │ 3a4eb     │ which     │ I don't   │ chamomile │ None       │ I DON'T   │  │
+│  │           │ species   │ know      │ used in   │            │ KNOW      │  │
+│  │           │ of the    │           │ herbal    │            │           │  │
+│  │           │ flower on │           │ infusions │            │           │  │
+│  │           │ the       │           │ comes     │            │           │  │
+│  │           │ package   │           │ mainly    │            │           │  │
+│  │           │ are used  │           │ from two  │            │           │  │
+│  │           │ for       │           │ species:  │            │           │  │
+│  │           │ herbal    │           │ german    │            │           │  │
+│  │           │ beverage  │           │ chamomile │            │           │  │
+│  │           │ infusion… │           │ or        │            │           │  │
+│  │           │           │           │ matricar… │            │           │  │
+│  │           │           │           │ chamomil… │            │           │  │
+│  │           │           │           │ which is  │            │           │  │
+│  │           │           │           │ more      │            │           │  │
+│  │           │           │           │ common    │            │           │  │
+│  │           │           │           │ and       │            │           │  │
+│  │           │           │           │ sweeter,  │            │           │  │
+│  │           │           │           │ and roman │            │           │  │
+│  │           │           │           │ chamomile │            │           │  │
+│  │           │           │           │ or        │            │           │  │
+│  │           │           │           │ chamaeme… │            │           │  │
+│  │           │           │           │ nobile,   │            │           │  │
+│  │           │           │           │ which has │            │           │  │
+│  │           │           │           │ a         │            │           │  │
+│  │           │           │           │ slightly  │            │           │  │
+│  │           │           │           │ bitter    │            │           │  │
+│  │           │           │           │ taste.    │            │           │  │
+│  │ 3b6bc     │ was       │ I don't   │ no,       │ None       │ I DON'T   │  │
+│  │           │ picasso   │ know      │ picasso   │            │ KNOW      │  │
+│  │           │ alive     │           │ was not   │            │           │  │
+│  │           │ when the  │           │ alive     │            │           │  │
+│  │           │ painting  │           │ when the  │            │           │  │
+│  │           │ in the    │           │ bridge    │            │           │  │
+│  │           │ top left  │           │ over the  │            │           │  │
+│  │           │ corner    │           │ seine at  │            │           │  │
+│  │           │ was       │           │ argenteu… │            │           │  │
+│  │           │ complete… │           │ was       │            │           │  │
+│  │           │           │           │ complete… │            │           │  │
+│  │           │           │           │ the       │            │           │  │
+│  │           │           │           │ painting  │            │           │  │
+│  │           │           │           │ was       │            │           │  │
+│  │           │           │           │ created   │            │           │  │
+│  │           │           │           │ by claude │            │           │  │
+│  │           │           │           │ monet in  │            │           │  │
+│  │           │           │           │ 1874,     │            │           │  │
+│  │           │           │           │ while     │            │           │  │
+│  │           │           │           │ picasso   │            │           │  │
+│  │           │           │           │ was born  │            │           │  │
+│  │           │           │           │ in 1881.  │            │           │  │
+│  └───────────┴───────────┴───────────┴───────────┴────────────┴───────────┘  │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─────────────────────── Evaluation Results :: Ego Only ───────────────────────╮
+│                                                                              │
+│  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓                                     │
+│  ┃ Metric                    ┃ Value   ┃                                     │
+│  ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩                                     │
+│  │ Total conversations       │ 52      │                                     │
+│  │ Total turns               │ 52      │                                     │
+│  │ Avg MT conversation score │ -0.29   │                                     │
+│  │ Exact matches             │ 0.0     │                                     │
+│  │ "I don't know" responses  │ 37.0    │                                     │
+│  │ Hallucinated responses    │ 15.0    │                                     │
+│  │ Exact accuracy            │ 0.00%   │                                     │
+│  │ Accuracy                  │ 0.00%   │                                     │
+│  │ Missing rate              │ 71.15%  │                                     │
+│  │ Hallucination rate        │ 28.85%  │                                     │
+│  │ Truthfulness score        │ -0.2885 │                                     │
+│  └───────────────────────────┴─────────┘                                     │
+│                                                                              │
+│  Sample Evaluation Results                                                   │
+│                              Evaluation Results                              │
+│  ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━┓  │
+│  ┃           ┃           ┃ Agent     ┃ Ground    ┃ API        ┃ Evaluati… ┃  │
+│  ┃ interact… ┃ Query     ┃ Response  ┃ Truth     ┃ Response   ┃ Result    ┃  │
+│  ┡━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━┩  │
+│  │ 01312     │ who made  │ I don't   │ the       │ None       │ I DON'T   │  │
+│  │           │ this      │ know      │ artist of │            │ KNOW      │  │
+│  │           │ painting? │           │ the       │            │           │  │
+│  │           │           │           │ painting  │            │           │  │
+│  │           │           │           │ untitled  │            │           │  │
+│  │           │           │           │ (paths,   │            │           │  │
+│  │           │           │           │ crossing… │            │           │  │
+│  │           │           │           │ is cy     │            │           │  │
+│  │           │           │           │ gavin.    │            │           │  │
+│  │ 028be     │ where is  │ Midtown   │ honda is  │ None       │ INCORRECT │  │
+│  │           │ the       │ Manhatta… │ headquar… │            │           │  │
+│  │           │ manufact… │ New York  │ in        │            │           │  │
+│  │           │ of this   │ City      │ minato,   │            │           │  │
+│  │           │ car       │           │ tokyo,    │            │           │  │
+│  │           │ located?  │           │ japan.    │            │           │  │
+│  │ 1d049     │ did the   │ I don't   │ no,       │ None       │ I DON'T   │  │
+│  │           │ japanese  │ know      │ because   │            │ KNOW      │  │
+│  │           │ police    │           │ the 1998  │            │           │  │
+│  │           │ use this  │           │ winter    │            │           │  │
+│  │           │ during    │           │ olympics  │            │           │  │
+│  │           │ the 1998  │           │ in nagano │            │           │  │
+│  │           │ winter    │           │ held      │            │           │  │
+│  │           │ olympics  │           │ before    │            │           │  │
+│  │           │ in        │           │ the       │            │           │  │
+│  │           │ nagano?   │           │ nissan    │            │           │  │
+│  │           │           │           │ 370z was  │            │           │  │
+│  │           │           │           │ produced. │            │           │  │
+│  │ 22dfc     │ what are  │ I don't   │ onions    │ None       │ I DON'T   │  │
+│  │           │ some      │ know      │ offer     │            │ KNOW      │  │
+│  │           │ health    │           │ numerous  │            │           │  │
+│  │           │ benefits  │           │ health    │            │           │  │
+│  │           │ of        │           │ benefits, │            │           │  │
+│  │           │ consuming │           │ containi… │            │           │  │
+│  │           │ these?    │           │ chemicals │            │           │  │
+│  │           │           │           │ that      │            │           │  │
+│  │           │           │           │ combat    │            │           │  │
+│  │           │           │           │ cancer    │            │           │  │
+│  │           │           │           │ and       │            │           │  │
+│  │           │           │           │ antibact… │            │           │  │
+│  │           │           │           │ properti… │            │           │  │
+│  │           │           │           │ that kill │            │           │  │
+│  │           │           │           │ a wide    │            │           │  │
+│  │           │           │           │ range of  │            │           │  │
+│  │           │           │           │ bacteria. │            │           │  │
+│  │           │           │           │ they also │            │           │  │
+│  │           │           │           │ aid       │            │           │  │
+│  │           │           │           │ digestio… │            │           │  │
+│  │           │           │           │ support   │            │           │  │
+│  │           │           │           │ bone      │            │           │  │
+│  │           │           │           │ health,   │            │           │  │
+│  │           │           │           │ and may   │            │           │  │
+│  │           │           │           │ help      │            │           │  │
+│  │           │           │           │ lower     │            │           │  │
+│  │           │           │           │ choleste… │            │           │  │
+│  │           │           │           │ levels,   │            │           │  │
+│  │           │           │           │ making    │            │           │  │
+│  │           │           │           │ them a    │            │           │  │
+│  │           │           │           │ valuable  │            │           │  │
+│  │           │           │           │ addition  │            │           │  │
+│  │           │           │           │ to a      │            │           │  │
+│  │           │           │           │ healthy   │            │           │  │
+│  │           │           │           │ diet.     │            │           │  │
+│  │ 26a38     │ what is   │ Ford      │ the 2024  │ None       │ INCORRECT │  │
+│  │           │ the       │ F-550:    │ dodge ram │            │           │  │
+│  │           │ towing    │ towing_c… │ 3500 has  │            │           │  │
+│  │           │ capacity  │ 11,000    │ a towing  │            │           │  │
+│  │           │ and       │ lb,       │ capacity  │            │           │  │
+│  │           │ torque    │ torque:   │ of 37,090 │            │           │  │
+│  │           │ for the   │ 610 lb⋅ft │ pounds    │            │           │  │
+│  │           │ 2024      │           │ and       │            │           │  │
+│  │           │ version   │           │ torque of │            │           │  │
+│  │           │ of this   │           │ 1,075     │            │           │  │
+│  │           │ vehicle   │           │ pound-fe… │            │           │  │
+│  │           │ when it   │           │ when      │            │           │  │
+│  │           │ has a l6  │           │ equipped  │            │           │  │
+│  │           │ engine in │           │ with the  │            │           │  │
+│  │           │ it?       │           │ high-out… │            │           │  │
+│  │           │           │           │ 6.7l      │            │           │  │
+│  │           │           │           │ cummins   │            │           │  │
+│  │           │           │           │ turbo     │            │           │  │
+│  │           │           │           │ diesel i6 │            │           │  │
+│  │           │           │           │ engine.   │            │           │  │
+│  │ 2dfa6     │ which age │ Doctors,  │ males     │ None       │ INCORRECT │  │
+│  │           │ and sex   │ nurses,   │ aged      │            │           │  │
+│  │           │ had the   │ medical   │ 18-24 had │            │           │  │
+│  │           │ least     │ students  │ the       │            │           │  │
+│  │           │ amount of │           │ leaset    │            │           │  │
+│  │           │ injury-r… │           │ amount of │            │           │  │
+│  │           │ unintent… │           │ injury-r… │            │           │  │
+│  │           │ falls     │           │ unintent… │            │           │  │
+│  │           │ reported? │           │ falls     │            │           │  │
+│  │           │           │           │ reported. │            │           │  │
+│  │ 34bfa     │ was this  │ No        │ no, the   │ None       │ INCORRECT │  │
+│  │           │ car       │           │ ford      │            │           │  │
+│  │           │ around    │           │ mustang   │            │           │  │
+│  │           │ before    │           │ began     │            │           │  │
+│  │           │ the       │           │ producti… │            │           │  │
+│  │           │ jaguar    │           │ in 1964,  │            │           │  │
+│  │           │ xk-e?     │           │ while the │            │           │  │
+│  │           │           │           │ jaguar    │            │           │  │
+│  │           │           │           │ xk-e      │            │           │  │
+│  │           │           │           │ began     │            │           │  │
+│  │           │           │           │ producti… │            │           │  │
+│  │           │           │           │ in 1961.  │            │           │  │
+│  │ 39172     │ what      │ I don't   │ a 2015    │ None       │ I DON'T   │  │
+│  │           │ multimed… │ know      │ chevrolet │            │ KNOW      │  │
+│  │           │ features  │           │ suburban  │            │           │  │
+│  │           │ does this │           │ features  │            │           │  │
+│  │           │ car have? │           │ a         │            │           │  │
+│  │           │           │           │ single-s… │            │           │  │
+│  │           │           │           │ cd and    │            │           │  │
+│  │           │           │           │ mp3       │            │           │  │
+│  │           │           │           │ player,   │            │           │  │
+│  │           │           │           │ 6-speaker │            │           │  │
+│  │           │           │           │ system,   │            │           │  │
+│  │           │           │           │ siriusxm  │            │           │  │
+│  │           │           │           │ satellite │            │           │  │
+│  │           │           │           │ radio, hd │            │           │  │
+│  │           │           │           │ radio and │            │           │  │
+│  │           │           │           │ bluetooth │            │           │  │
+│  │           │           │           │ connecti… │            │           │  │
+│  │           │           │           │ for phone │            │           │  │
+│  │           │           │           │ use.      │            │           │  │
+│  │ 3a4eb     │ which     │ I don't   │ chamomile │ None       │ I DON'T   │  │
+│  │           │ species   │ know      │ used in   │            │ KNOW      │  │
+│  │           │ of the    │           │ herbal    │            │           │  │
+│  │           │ flower on │           │ infusions │            │           │  │
+│  │           │ the       │           │ comes     │            │           │  │
+│  │           │ package   │           │ mainly    │            │           │  │
+│  │           │ are used  │           │ from two  │            │           │  │
+│  │           │ for       │           │ species:  │            │           │  │
+│  │           │ herbal    │           │ german    │            │           │  │
+│  │           │ beverage  │           │ chamomile │            │           │  │
+│  │           │ infusion… │           │ or        │            │           │  │
+│  │           │           │           │ matricar… │            │           │  │
+│  │           │           │           │ chamomil… │            │           │  │
+│  │           │           │           │ which is  │            │           │  │
+│  │           │           │           │ more      │            │           │  │
+│  │           │           │           │ common    │            │           │  │
+│  │           │           │           │ and       │            │           │  │
+│  │           │           │           │ sweeter,  │            │           │  │
+│  │           │           │           │ and roman │            │           │  │
+│  │           │           │           │ chamomile │            │           │  │
+│  │           │           │           │ or        │            │           │  │
+│  │           │           │           │ chamaeme… │            │           │  │
+│  │           │           │           │ nobile,   │            │           │  │
+│  │           │           │           │ which has │            │           │  │
+│  │           │           │           │ a         │            │           │  │
+│  │           │           │           │ slightly  │            │           │  │
+│  │           │           │           │ bitter    │            │           │  │
+│  │           │           │           │ taste.    │            │           │  │
+│  │ 3b6bc     │ was       │ I don't   │ no,       │ None       │ I DON'T   │  │
+│  │           │ picasso   │ know      │ picasso   │            │ KNOW      │  │
+│  │           │ alive     │           │ was not   │            │           │  │
+│  │           │ when the  │           │ alive     │            │           │  │
+│  │           │ painting  │           │ when the  │            │           │  │
+│  │           │ in the    │           │ bridge    │            │           │  │
+│  │           │ top left  │           │ over the  │            │           │  │
+│  │           │ corner    │           │ seine at  │            │           │  │
+│  │           │ was       │           │ argenteu… │            │           │  │
+│  │           │ complete… │           │ was       │            │           │  │
+│  │           │           │           │ complete… │            │           │  │
+│  │           │           │           │ the       │            │           │  │
+│  │           │           │           │ painting  │            │           │  │
+│  │           │           │           │ was       │            │           │  │
+│  │           │           │           │ created   │            │           │  │
+│  │           │           │           │ by claude │            │           │  │
+│  │           │           │           │ monet in  │            │           │  │
+│  │           │           │           │ 1874,     │            │           │  │
+│  │           │           │           │ while     │            │           │  │
+│  │           │           │           │ picasso   │            │           │  │
+│  │           │           │           │ was born  │            │           │  │
+│  │           │           │           │ in 1881.  │            │           │  │
+│  └───────────┴───────────┴───────────┴───────────┴────────────┴───────────┘  │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯

@@ -8,13 +8,13 @@ Task 1: Single-Source Augmentation Agent (Enhanced)
   2. 图片 → search_pipeline (image search) → 知识图谱结构化数据
   3. 基于相似度分数过滤低质量 KG 结果
   4. 提取实体属性 (description, caption, summary 等)，按分数加权
-  5. 构建分层 Prompt：图片 + KG 数据 + 问题 + 查询类型指导
+  5. 构建分层 Prompt: 图片 + KG 数据 + 问题 + 查询类型指导
   6. VLM 生成答案
   7. 后处理：置信度判断，不确定时说 "I don't know"
 
 技术栈：
-  - 检索：cragmm-search-pipeline (CLIP + BGE)
-  - 推理：mlx-vlm + Qwen2-VL-2B-Instruct-4bit (Apple Silicon 原生)
+  - 检索: cragmm-search-pipeline (CLIP + BGE)
+  - 推理: mlx-vlm + Qwen2-VL-2B-Instruct-4bit (Apple Silicon 原生)
 """
 
 from typing import Dict, List, Any, Tuple, Optional
